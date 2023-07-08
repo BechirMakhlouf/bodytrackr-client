@@ -1,46 +1,54 @@
 import { useRef } from "react";
+import { SERVER_URL } from "../../globals";
+import { UserCredentials } from "./loginPage";
 
-interface UserCredentials {
-  email: string,
-  password: string,
-}
+const registerUrl: URL = new URL("/register", SERVER_URL);
 
 export default function RegisterPage() {
   const emailInput = useRef({} as HTMLInputElement);
   const passwordInput = useRef({} as HTMLInputElement);
+
   return (
     <>
       <h1></h1>
-      <form action="" onSubmit={async (e) => {
-        e.preventDefault();
-        const userCredentials: UserCredentials = {
-          email: emailInput.current.value,
-          password: passwordInput.current.value
-        }
+      <form
+        action=""
+        onSubmit={async (e) => {
+          e.preventDefault();
 
-        const response = await fetch("http://192.168.1.50:6969/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userCredentials), 
-        });
-        
-        console.log(await response.json());
-      }}>
+          const userCredentials: UserCredentials = {
+            email: emailInput.current.value,
+            password: passwordInput.current.value,
+          };
 
-      <input ref={emailInput} className="border-1 border-black" type="email" name="email" required={true}/>
+          const response = await fetch(registerUrl.href, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userCredentials),
+          });
 
-      <input
-        ref={passwordInput}
-        className="border-1 border-black"
-        type="password"
-        name="password"
-        required={true}
-      />
+          console.log(await response.json());
+        }}
+      >
+        <input
+          ref={emailInput}
+          className="border-1 border-black"
+          type="email"
+          name="email"
+          required={true}
+        />
 
-      <button type="submit">Log in</button>
+        <input
+          ref={passwordInput}
+          className="border-1 border-black"
+          type="password"
+          name="password"
+          required={true}
+        />
 
+        <button type="submit">Log in</button>
       </form>
     </>
   );

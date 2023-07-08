@@ -1,1 +1,1 @@
-export const SERVER_URL = new URL("http://127.0.0.1:6969/");
+export const SERVER_URL: string = "http://localhost:6969/";
