@@ -6,14 +6,35 @@ interface UserCredentials {
   password: string;
 }
 
-const loginUrl: URL = new URL("/login", SERVER_URL);
+// const loginUrl: URL = new URL("/login", SERVER_URL);
+
+async function login(userCredentials: UserCredentials): Promise<boolean> {
+  const loginUrl: URL = new URL("/login", SERVER_URL);
+
+  const response = await fetch(loginUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userCredentials),
+  });
+
+  if (response.status === 200) {
+    console.log(response);
+    console.log(await response.json());
+
+    return true;
+  } else {
+
+    return false;
+  }
+}
 
 export default function LoginPage() {
   const emailInput = useRef({} as HTMLInputElement);
   const passwordInput = useRef({} as HTMLInputElement);
   return (
     <>
-      <h1></h1>
       <form
         action=""
         onSubmit={async (e) => {
@@ -23,15 +44,7 @@ export default function LoginPage() {
             password: passwordInput.current.value,
           };
 
-          const response = await fetch(loginUrl.href, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userCredentials),
-          });
-
-          console.log(await response.json());
+          login(userCredentials);
         }}
       >
         <input

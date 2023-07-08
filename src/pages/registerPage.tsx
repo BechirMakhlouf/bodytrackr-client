@@ -2,7 +2,22 @@ import { useRef } from "react";
 import { SERVER_URL } from "../../globals";
 import { UserCredentials } from "./loginPage";
 
-const registerUrl: URL = new URL("/register", SERVER_URL);
+// const registerUrl: URL = new URL("/register", SERVER_URL);
+
+async function login(userCredentials: UserCredentials) {
+  const loginUrl: URL = new URL("/login", SERVER_URL);
+
+  const response = await fetch(loginUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userCredentials),
+  });
+  console.log(response);
+  console.log(await response.json());
+  // return ;
+}
 
 export default function RegisterPage() {
   const emailInput = useRef({} as HTMLInputElement);
@@ -10,9 +25,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <h1></h1>
       <form
-        action=""
         onSubmit={async (e) => {
           e.preventDefault();
 
@@ -21,15 +34,7 @@ export default function RegisterPage() {
             password: passwordInput.current.value,
           };
 
-          const response = await fetch(registerUrl.href, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userCredentials),
-          });
-
-          console.log(await response.json());
+          await login(userCredentials);
         }}
       >
         <input
@@ -48,7 +53,7 @@ export default function RegisterPage() {
           required={true}
         />
 
-        <button type="submit">Log in</button>
+        <button type="submit">Register</button>
       </form>
     </>
   );
