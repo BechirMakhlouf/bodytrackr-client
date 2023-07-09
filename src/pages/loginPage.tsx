@@ -7,51 +7,27 @@ interface UserCredentials {
 
 // const loginUrl: URL = new URL("/login", SERVER_URL);
 
-// async function login(userCredentials: UserCredentials) {
-//   const loginUrl: URL = new URL("/login", SERVER_URL);
-//
-//   console.log(document.cookie);
-//   const response = await fetch(loginUrl, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(userCredentials),
-//   });
-//   console.log(await response.json())
-  // if (response.status === 200) {
-  //   console.log(await response.json());
-  //   // document.cookie = 'refreshToken=cookieValue; path=/;';
-  //   // console.log(document.cookie);
-  //
-  //   return true;
-  // } else {
-  //
-  //   return false;
-  // }
-// }
-
-async function _login(userCredentials: UserCredentials): Promise<boolean> {
+async function login(userCredentials: UserCredentials) {
   const loginUrl: URL = new URL("/login", SERVER_URL);
-
   const response = await fetch(loginUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    // credentials:,
     body: JSON.stringify(userCredentials),
   });
 
-  if (response.status === 200){
-    const responseData = await response.json();
+  if (response.status === 200) {
+    console.log(await response.json());
+    // document.cookie = 'refreshToken=cookieValue; path=/;';
+    // console.log(document.cookie);
 
-    document.cookie = responseData.refreshTokenCookie;
-    localStorage.setItem("accessToken", responseData.accessToken);
     return true;
   } else {
+
     return false;
   }
-
 }
 
 export default function LoginPage() {
@@ -60,18 +36,8 @@ export default function LoginPage() {
   return (
     <>
       <form
-        onSubmit={async (e) => {
-          e.preventDefault()
-          const userCredentials: UserCredentials = {
-            email: emailInput.current.value,
-            password: passwordInput.current.value,
-          }
-          if (!await _login(userCredentials)) {
-            alert("wrong credentials!");
-          } else {
-            alert("hello!");
-          }
-        }}
+        action="http://127.0.0.1:6969/login"
+        method="POST"
       >
         <input
           ref={emailInput}
