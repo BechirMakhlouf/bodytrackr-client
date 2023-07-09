@@ -1,21 +1,27 @@
 import { useRef } from "react";
 import { SERVER_URL } from "../../globals";
 import { UserCredentials } from "./loginPage";
-
+import axios from "axios";
 // const registerUrl: URL = new URL("/register", SERVER_URL);
 
 async function login(userCredentials: UserCredentials) {
   const loginUrl: URL = new URL("/login", SERVER_URL);
+  const result = await axios({
+    method: "post",
+    url: loginUrl.href,
+    data: userCredentials
+  })
 
-  const response = await fetch(loginUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userCredentials),
-  });
-  console.log(response);
-  console.log(await response.json());
+  console.log(result);
+  // const response = await fetch(loginUrl, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify(userCredentials),
+  // });
+  // console.log(response);
+  // console.log(await response.json());
   // return ;
 }
 
