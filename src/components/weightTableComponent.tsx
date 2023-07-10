@@ -1,24 +1,26 @@
 import { Weight } from "../pages/dashboardPage";
 
 export default function WeightTable(props: { weightLog: Weight[] }) {
-  
   return (
-      <table>
-        <th>
-          <td>hello</td>
-          <td>there</td>
-        </th>
-        {props.weightLog.map((weight, i) => { 
-          console.log(weight);
-          const time = weight.date.toString().split("T")[0];
-          return (
-            <tr key={i}>
-              <td>{weight.weightKg}</td>
-              <td>{`${time}`}</td>
-            </tr>
-          ); 
 
+    <table className="w-full border-black border-2">
+      <thead>
+        <tr>
+          <th>Weight</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.weightLog.map((weight) => {
+          const formattedDate = weight.date.toLocaleDateString();
+          return (
+            <tr key={formattedDate} >
+              <td className="text-center">{weight.weightKg}</td>
+              <td className="text-center">{formattedDate}</td>
+            </tr>
+          );
         })}
-      </table>
+      </tbody>
+    </table>
   );
 }
