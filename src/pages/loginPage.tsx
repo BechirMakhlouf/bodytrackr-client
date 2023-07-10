@@ -8,6 +8,7 @@ interface UserCredentials {
 // const loginUrl: URL = new URL("/login", SERVER_URL);
 
 async function login(userCredentials: UserCredentials) {
+
   const loginUrl: URL = new URL("/login", SERVER_URL);
   const response = await fetch(loginUrl, {
     method: "POST",
