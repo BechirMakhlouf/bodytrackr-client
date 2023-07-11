@@ -1,5 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import WeightTable from "../components/weightTableComponent";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface Weight {
   weightKg: number;
@@ -19,41 +22,99 @@ function sortWeightLog(weightLog: Weight[]): Weight[] {
   return weightLog.sort((a, b) => {
     a.date.setHours(0, 0, 0, 0);
     b.date.setHours(0, 0, 0, 0);
+
     return a.date > b.date ? -1 : 1;
   });
 }
-export default function DashboardPage() {
+
+function inputWeightComponent() {
+  const { control, register, handleSubmit } = useForm<Weight>();
   const [weightLog, setWeightLog] = useState(getWeightLogFromLocaleStorage());
-  const weightInput = useRef({} as HTMLInputElement);
-  const dateInput = useRef({} as HTMLInputElement);
+
+  const onWeightSubmit: SubmitHandler<Weight> = (
+    submittedWeight,
+  ) => {
+    submittedWeight.date = new Date(submittedWeight.date);
+
+    const updatedWeightLog = sortWeightLog([
+      ...weightLog,
+      submittedWeight,
+    ]);
+
+    setWeightLog(sortWeightLog(updatedWeightLog));
+    localStorage.setItem("weightLog", JSON.stringify(weightLog));
+    console.log(submittedWeight);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onWeightSubmit)}>
+      <input
+        placeholder="enter weight"
+        {...register("weightKg", { required: true, max: 200, min: 10 })}
+        type="text"
+      />
+
+      <Controller
+        control={control}
+        name="date"
+        render={({ field }) => (
+          <DatePicker
+            placeholderText="enter a date"
+            selected={field.value}
+            onChange={(date: Date) => field.onChange(date)}
+            maxDate={new Date()}
+          />
+        )}
+      />
+      <input type="submit" />
+    </form>
+  );
+}
+export default function DashboardPage() {
+  const { control, register, handleSubmit } = useForm<Weight>();
+  // const [startDate, setStartDate] = useState(new Date());
+
+  const [weightLog, setWeightLog] = useState(getWeightLogFromLocaleStorage());
+
+  const onWeightSubmit: SubmitHandler<Weight> = (
+    submittedWeight,
+  ) => {
+    submittedWeight.date = new Date(submittedWeight.date);
+
+    const updatedWeightLog = sortWeightLog([
+      ...weightLog,
+      submittedWeight,
+    ]);
+
+    setWeightLog(sortWeightLog(updatedWeightLog));
+    localStorage.setItem("weightLog", JSON.stringify(weightLog));
+    console.log(submittedWeight);
+  };
 
   return (
     <>
-      <h1 className="bg-sidibou-blue text-4xl">hello world</h1>
+      <h1 className="bg-sidibou-blue text-4xl">weight logs</h1>
       <WeightTable weightLog={weightLog} />
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
+      <form onSubmit={handleSubmit(onWeightSubmit)}>
+        <input
+          {...register("weightKg", { required: true, max: 200, min: 10 })}
+          type="text"
+        />
 
-          const submittedWeight: Weight = {
-            weightKg: Number(weightInput.current.value),
-            date: new Date(dateInput.current.value),
-          };
-          const updatedWeightLog = sortWeightLog([
-            ...weightLog,
-            submittedWeight,
-          ]);
-
-          localStorage.setItem("weightLog", JSON.stringify(weightLog));
-
-          setWeightLog(() => updatedWeightLog);
-        }}
-      >
-        <input ref={weightInput} type="number" name="weight" />
-        <input ref={dateInput} type="date" name="date" />
-
-        <button type="submit">submit</button>
+        <Controller
+          control={control}
+          name="date"
+          render={({ field }) => (
+            <DatePicker
+              placeholderText="enter a date"
+              selected={field.value}
+              onChange={(date: Date) => field.onChange(date)}
+              maxDate={new Date()}
+            />
+          )}
+        />
+        <input type="submit" />
       </form>
     </>
   );
