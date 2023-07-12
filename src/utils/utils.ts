@@ -1,0 +1,104 @@
+import { IUserInfo, UserInfo, Weight } from "../../globals";
+
+function getWeightLogFromLocalStorage(): Weight[] {
+  const weightLog: Weight[] =
+    JSON.parse(localStorage.getItem("weightLog") as string) || [];
+
+  weightLog.forEach((weight) => (weight.date = new Date(weight.date)));
+
+  return weightLog;
+}
+
+// update this
+function isWeightArrValid(weightArr: Weight[]): boolean {
+  for (let weight of weightArr) {
+    if (
+      weight.date.getTime() > (new Date()).getTime() || weight.weightKg <= 20 ||
+      weight.weightKg >= 250
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function dateIndexInWeightArr(
+  date: Date,
+  weightLog: Weight[],
+  start: number = 0,
+  end: number = weightLog.length - 1,
+): number {
+  if (start > end) return -1;
+
+  console.log(start, end);
+  let mid = Math.floor((start + end) / 2);
+
+  if (weightLog[mid].date.toISOString() === date.toISOString()) return mid;
+
+  if (weightLog[mid].date.getTime() > date.getTime()) {
+    return dateIndexInWeightArr(date, weightLog, start, mid - 1);
+  } else {
+    return dateIndexInWeightArr(date, weightLog, mid + 1, end);
+  }
+}
+
+function storeWeightLogToLocalStorage(weightLog: Weight[]): unknown {
+  try {
+    localStorage.setItem("weightLog", JSON.stringify(weightLog));
+  } catch (error) {
+    return error;
+  }
+}
+
+function sortWeightLog(weightLog: Weight[]): Weight[] {
+  return weightLog.sort((a, b) => {
+    a.date.setHours(0, 0, 0, 0);
+    b.date.setHours(0, 0, 0, 0);
+
+    return a.date > b.date ? 1 : -1;
+  });
+}
+
+function getUserInfoFromLocalStorage(): IUserInfo {
+  const userInfo: any = JSON.parse(
+    localStorage.getItem("userInfo") as string,
+  );
+
+  if (!(userInfo instanceof UserInfo)) {
+    throw new Error("invalid userInfo json object");
+  }
+
+  return userInfo;
+}
+
+function setUserInfoFromLocalStorage(userInfo: IUserInfo) {
+  localStorage.setItem("userInfo", JSON.stringify(userInfo));
+}
+
+function weightKgtoLbs(weightKg: number): number {
+  return weightKg * 2.20462262185;
+}
+
+function weightLbsToKg(weightLbs: number): number {
+  return weightLbs * 0.45359237;
+}
+
+function cmToFeet(lengthCm: number): number {
+  return lengthCm * 0.032808;
+}
+
+function feetToCm(lengthFeet: number): number {
+  return lengthFeet * 30.48;
+}
+export {
+  cmToFeet,
+  dateIndexInWeightArr,
+  getUserInfoFromLocalStorage,
+  getWeightLogFromLocalStorage,
+  isWeightArrValid,
+  setUserInfoFromLocalStorage,
+  sortWeightLog,
+  storeWeightLogToLocalStorage,
+  weightKgtoLbs,
+  weightLbsToKg,
+};

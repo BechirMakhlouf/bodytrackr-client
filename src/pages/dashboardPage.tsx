@@ -3,111 +3,56 @@ import WeightTable from "../components/weightTableComponent";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Weight } from "../../globals";
-
-function getWeightLogFromLocaleStorage(): Weight[] {
-  const weightLog: Weight[] =
-    JSON.parse(localStorage.getItem("weightLog") as string) || [];
-
-  weightLog.forEach((weight) => (weight.date = new Date(weight.date)));
-
-  return weightLog;
-}
-let recursiveFunction = function (arr, x, start, end) {
-  // Base Condition
-  if (start > end) return false;
-
-  // Find the middle index
-  let mid = Math.floor((start + end) / 2);
-
-  // Compare mid with given key x
-  if (arr[mid] === x) return true;
-
-  // If element at mid is greater than x,
-  // search in the left half of mid
-  if (arr[mid] > x) {
-    return recursiveFunction(arr, x, start, mid - 1);
-  } // If element at mid is smaller than x,
-  // search in the right half of mid
-  else {
-    return recursiveFunction(arr, x, mid + 1, end);
-  }
-};
-function DoesDateExistInWeightLog(
-  date: Date,
-  weightLog: Weight[],
-  start: number = 0,
-  end: number = weightLog.length - 1,
-): boolean {
-  
-  console.log(start, end);
-  // Base Condition
-  if (start > end) return false;
-
-  // Find the middle index
-  let mid = Math.floor((start + end) / 2);
-
-  // Compare mid with given key x
-  if (weightLog[mid].date.toDateString() === date.toDateString()) return true;
-
-  // If element at mid is greater than x,
-  // search in the left half of mid
-  if (weightLog[mid].date > date) {
-    return DoesDateExistInWeightLog(date, weightLog, start, mid - 1);
-  } // If element at mid is smaller than x,
-  // search in the right half of mid
-  else {
-    return DoesDateExistInWeightLog(date, weightLog, mid + 1, end);
-  }
-}
-
-function storeWeightLogToLocalStorage(weightLog: Weight[]): unknown {
-  try {
-    localStorage.setItem("weightLog", JSON.stringify(weightLog));
-  } catch (error) {
-    return error;
-  }
-}
-
-function sortWeightLog(weightLog: Weight[]): Weight[] {
-  return weightLog.sort((a, b) => {
-    a.date.setHours(0, 0, 0, 0);
-    b.date.setHours(0, 0, 0, 0);
-
-    return a.date > b.date ? -1 : 1;
-  });
-}
+import { MAX_WEIGHT_KG, MIN_WEIGHT_KG, UserPreferences, Weight } from "../../globals";
+import {
+  getWeightLogFromLocalStorage,
+  storeWeightLogToLocalStorage,
+  dateIndexInWeightArr,
+  sortWeightLog,
+} from "../utils/utils"
 
 export default function DashboardPage() {
   const { control, register, handleSubmit } = useForm<Weight>();
-  // const [startDate, setStartDate] = useState(new Date());
 
-  const [weightLog, setWeightLog] = useState(getWeightLogFromLocaleStorage());
+  const [weightLog, setWeightLog] = useState(getWeightLogFromLocalStorage());
 
   const onWeightSubmit: SubmitHandler<Weight> = (
-    submittedWeight,
+    submittedWeight: Weight,
   ) => {
-
     submittedWeight.date = new Date(submittedWeight.date);
+
+    const dateIndexInWeightLog: number = dateIndexInWeightArr(
+      submittedWeight.date,
+      weightLog,
+    );
+    if (dateIndexInWeightLog !== -1) {
+      if (confirm("date already exists! do you want to ovewrite?") === false) {
+        return;
+      }
+
+      weightLog[dateIndexInWeightLog].weightKg = submittedWeight.weightKg;
+
+      setWeightLog(() => [...weightLog]);
+      return;
+    }
+
     const updatedWeightLog = sortWeightLog([
       ...weightLog,
       submittedWeight,
     ]);
-    console.log(submittedWeight.date)
-    console.log(DoesDateExistInWeightLog(submittedWeight.date, weightLog))
-    // setWeightLog(sortWeightLog(updatedWeightLog));
-    // localStorage.setItem("weightLog", JSON.stringify(weightLog));
-    console.log(submittedWeight);
+
+    setWeightLog(sortWeightLog(updatedWeightLog));
+    storeWeightLogToLocalStorage(updatedWeightLog);
   };
 
   return (
     <>
-      <h1 className="bg-sidibou-blue text-4xl">weight logs</h1>
-      <WeightTable weightLog={weightLog} />
+      <h1 className="bg-sidibou-blue text-4xl text-center p-2">BodyTrackr</h1>
+      // <WeightTable weightLog={weightLog} userPreferences={new UserPreferences()}/>
 
       <form onSubmit={handleSubmit(onWeightSubmit)}>
         <input
-          {...register("weightKg", { required: true, max: 200, min: 10 })}
+          {...register("weightKg", { required: true, max: MAX_WEIGHT_KG, min: MIN_WEIGHT_KG })}
           className="border-1 border-black"
           type="number"
           placeholder="enter weight"
@@ -126,7 +71,6 @@ export default function DashboardPage() {
               required
             />
           )}
-          rules={{}}
         />
 
         <input type="submit" />
