@@ -5,11 +5,12 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    colors: {
-      "almost-white": "#E9F1F7",
-      "sidibou-blue": "#2274A5"
+    extend: {
+      colors: {
+        "almost-white": "#E9F1F7",
+        "sidibou-blue": "#2274A5"
+      },
     },
-    extend: {},
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
     },
