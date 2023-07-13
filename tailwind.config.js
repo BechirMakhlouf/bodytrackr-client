@@ -8,11 +8,13 @@ export default {
     extend: {
       colors: {
         "almost-white": "#E9F1F7",
-        "sidibou-blue": "#2274A5"
+        "white-grey": "#D9D9D9",
+        "grey-grey": "#8A8787",
+        "sidibou-blue": "#2274A5",
       },
     },
     fontFamily: {
-      sans: ['Inter', 'sans-serif'],
+      sans: ["Inter", "sans-serif"],
     },
   },
   plugins: [],

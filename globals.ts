@@ -8,8 +8,7 @@ export interface Weight {
   date: Date;
 }
 
-// export type Units = "metric" | "imperial";
-export enum Unit  {
+export enum Unit {
   Metric,
   Imperial,
 }
@@ -25,6 +24,7 @@ export interface IUserPreferences {
   lengthUnit?: Unit;
   darkMode?: boolean;
 }
+
 export class UserPreferences implements IUserPreferences {
   weightUnit: Unit;
   lengthUnit: Unit;
@@ -33,7 +33,7 @@ export class UserPreferences implements IUserPreferences {
   constructor(
     weightUnit: Unit = Unit.Metric,
     lengthUnit: Unit = Unit.Metric,
-    darkMode: boolean = true,
+    darkMode: boolean = true
   ) {
     this.weightUnit = weightUnit;
     this.lengthUnit = lengthUnit;
@@ -48,7 +48,7 @@ export interface IUserInfo {
   sex?: Sex;
   heightCm?: number;
   birthYear?: number;
-  preferences?: IUserPreferences;
+  preferences: UserPreferences;
   weightLog: Weight[];
 }
 
@@ -59,7 +59,8 @@ export class UserInfo implements IUserInfo {
   sex: Sex;
   heightCm: number;
   birthYear: number;
-  preferences: IUserPreferences;
+  goalWeight: number;
+  preferences: UserPreferences;
   weightLog: Weight[];
 
   constructor(
@@ -67,10 +68,11 @@ export class UserInfo implements IUserInfo {
     firstName: string = "",
     email: string = "",
     sex: Sex = Sex.Other,
-    heightCm: number,
-    birthYear: number,
-    preferences: IUserPreferences,
-    weightLog: Weight[],
+    heightCm: number = 0,
+    birthYear: number = 0,
+    goalWeight: 0,
+    preferences: UserPreferences = new UserPreferences(),
+    weightLog: Weight[] = []
   ) {
     this.name = name;
     this.firstName = firstName;
@@ -80,5 +82,12 @@ export class UserInfo implements IUserInfo {
     this.birthYear = birthYear;
     this.preferences = preferences;
     this.weightLog = weightLog;
+    this.goalWeight = goalWeight;
   }
+
+  get currentWeight(): Weight {
+    return this.weightLog[this.weightLog.length - 1];
+  }
+
+
 }

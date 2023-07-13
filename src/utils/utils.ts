@@ -1,4 +1,4 @@
-import { IUserInfo, UserInfo, Weight } from "../../globals";
+import { Unit, UserInfo, Weight } from "../../globals";
 
 function getWeightLogFromLocalStorage(): Weight[] {
   const weightLog: Weight[] =
@@ -13,7 +13,8 @@ function getWeightLogFromLocalStorage(): Weight[] {
 function isWeightArrValid(weightArr: Weight[]): boolean {
   for (let weight of weightArr) {
     if (
-      weight.date.getTime() > (new Date()).getTime() || weight.weightKg <= 20 ||
+      weight.date.getTime() > new Date().getTime() ||
+      weight.weightKg <= 20 ||
       weight.weightKg >= 250
     ) {
       return false;
@@ -26,7 +27,7 @@ function dateIndexInWeightArr(
   date: Date,
   weightLog: Weight[],
   start: number = 0,
-  end: number = weightLog.length - 1,
+  end: number = weightLog.length - 1
 ): number {
   if (start > end) return -1;
 
@@ -59,10 +60,12 @@ function sortWeightLog(weightLog: Weight[]): Weight[] {
   });
 }
 
-function getUserInfoFromLocalStorage(): IUserInfo {
-  const userInfo: any = JSON.parse(
-    localStorage.getItem("userInfo") as string,
-  );
+function getUserInfoFromLocalStorage(): UserInfo | undefined {
+  const userInfo: any = JSON.parse(localStorage.getItem("userInfo") as string);
+
+  if (!userInfo) {
+    return undefined;
+  }
 
   if (!(userInfo instanceof UserInfo)) {
     throw new Error("invalid userInfo json object");
@@ -71,7 +74,7 @@ function getUserInfoFromLocalStorage(): IUserInfo {
   return userInfo;
 }
 
-function setUserInfoFromLocalStorage(userInfo: IUserInfo) {
+function setUserInfoFromLocalStorage(userInfo: UserInfo) {
   localStorage.setItem("userInfo", JSON.stringify(userInfo));
 }
 
@@ -90,9 +93,34 @@ function cmToFeet(lengthCm: number): number {
 function feetToCm(lengthFeet: number): number {
   return lengthFeet * 30.48;
 }
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString();
+}
+
+function formatWeight(weightKg: number, unit: Unit): string {
+  const weightValue: number =
+    unit === Unit.Imperial ? weightKgtoLbs(weightKg) : weightKg;
+
+  return Number(weightValue).toFixed(1);
+}
+
+function weightDifferenceArray(weightArr: Weight[]): number[] {
+  return weightArr.map((weight, index, weightArr) => {
+    if (index) {
+      return weight.weightKg - weightArr[index - 1].weightKg;
+    } else {
+      return 0;
+    }
+  });
+}
+
 export {
   cmToFeet,
   dateIndexInWeightArr,
+  feetToCm,
+  formatDate,
+  formatWeight,
   getUserInfoFromLocalStorage,
   getWeightLogFromLocalStorage,
   isWeightArrValid,
@@ -101,4 +129,5 @@ export {
   storeWeightLogToLocalStorage,
   weightKgtoLbs,
   weightLbsToKg,
+  weightDifferenceArray,
 };
