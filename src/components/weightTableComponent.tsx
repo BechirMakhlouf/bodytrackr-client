@@ -1,5 +1,7 @@
+import editIcon from "../assets/edit-text.svg";
 import { useMemo } from "react";
 import { UserPreferences, Weight } from "../../globals";
+
 import {
   formatDate,
   formatWeight,
@@ -16,16 +18,18 @@ export default function WeightTable(props: {
   );
   return (
     <>
-      <table className="max-w-3xl p-4 flex flex-col items-stretch space-y-4 border-2 border-white-grey rounded-[60px]">
+      <table className="m-4 min-w-[480px] p-4 flex flex-col items-stretch space-y-4 border-1 border-gray-100 rounded-[36px] custom-shadow">
         <thead>
-          <tr className="flex text-2xl justify-around ">
+          <tr className="flex text-xl justify-around ">
             <th className="font-normal">Date</th>
-            <th className="font-normal">Weight</th>
+            <th className="font-normal">
+              Weight<span className="text-lg">(kg)</span>
+            </th>
             <th className="font-normal">Difference</th>
           </tr>
         </thead>
 
-        <tbody className="flex flex-col space-y-6">
+        <tbody className="flex flex-col">
           {props.weightLog
             .map((weight: Weight, index) => {
               const formattedDate: string = formatDate(weight.date);
@@ -37,21 +41,28 @@ export default function WeightTable(props: {
               return (
                 <tr
                   key={formattedDate}
-                  className="flex justify-around text-center"
+                  className="group relative py-2 custom-shadow-hover flex  
+                              justify-around text-center border-0 rounded-3xl"
                 >
-                  <td className="text-center text-xl w-full text-grey-grey">
+                  <td className="text-center text-base w-full text-grey-grey">
                     {formattedDate}
                   </td>
-                  <td className="text-center text-xl w-full">
+                  <td className="text-center text-base w-full">
                     {formattedWeight}
                   </td>
                   <td
-                    className={`text-center text-xl w-full ${
+                    className={`text-center text-base w-full ${
                       weightDiffArr[index] > 0 ? "text-sidibou-blue" : ""
                     } italic`}
                   >
                     {weightDiffArr[index].toFixed(1)}
                   </td>
+                  <img
+                    src={editIcon}
+                    alt="edit"
+                    className="absolute top-[10px] right-6 w-5 opacity-30 hidden group-hover:inline
+                                hover:opacity-60 active:opacity-30"
+                  />
                 </tr>
               );
             })

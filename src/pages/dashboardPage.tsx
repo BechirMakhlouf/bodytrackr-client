@@ -54,11 +54,15 @@ export default function DashboardPage() {
     <>
       <h1 className="bg-sidibou-blue text-4xl text-center p-2">BodyTrackr</h1>
 
-      <div className="mx-48">
+      <div className="flex w-2/3">
         <WeightTable
           weightLog={weightLog}
           userPreferences={preferences}
         />
+        {/* <WeightTable
+          weightLog={weightLog}
+          userPreferences={preferences}
+        /> */}
       </div>
 
       <form onSubmit={handleSubmit(onWeightSubmit)}>
