@@ -3,10 +3,11 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { preferencesContext, userInfoContext } from "../App";
 import WeightTable from "../components/weightTableComponent";
 import WeightChart from "../components/weightChartComponent";
 import Header from "../components/headerComponent";
+
+import { preferencesContext, userInfoContext } from "../App";
 import { MAX_WEIGHT_KG, MIN_WEIGHT_KG, Weight } from "../../globals";
 import {
   dateIndexInWeightArr,
@@ -51,10 +52,11 @@ export default function DashboardPage() {
 
   return (
     <>
+
      <Header />
 
       <div className="flex flex-wrap m-4">
-        <div className="w-2/3 p-16 custom-shadow rounded-[48px]">
+        <div className="min-w-[700px] w-2/3 px-8 flex justify-center items-center custom-shadow rounded-[48px]">
           <WeightChart weightLog={weightLog} />
         </div>
         <div className="flex flex-wrap justify-center w-1/3">
@@ -71,7 +73,7 @@ export default function DashboardPage() {
           })}
           className="border-1 border-black"
           type="number"
-          step={0.1}
+          step={0.2}
           min={MIN_WEIGHT_KG}
           placeholder="enter weight"
         />

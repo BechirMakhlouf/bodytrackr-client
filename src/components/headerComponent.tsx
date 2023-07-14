@@ -5,7 +5,7 @@ const Header = () => {
         <img
           src="../../public/logo-long-form.svg"
           alt="logo"
-          className="border w-full"
+          className="w-full"
         />
       </div>
       <ul className="max-w-[400px] w-full flex justify-around text-[16px]">
