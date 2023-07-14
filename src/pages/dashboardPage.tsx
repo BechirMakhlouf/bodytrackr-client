@@ -3,8 +3,10 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { preferencesContext } from "../App";
+import { preferencesContext, userInfoContext } from "../App";
 import WeightTable from "../components/weightTableComponent";
+import WeightChart from "../components/weightChartComponent";
+import Header from "../components/headerComponent";
 import { MAX_WEIGHT_KG, MIN_WEIGHT_KG, Weight } from "../../globals";
 import {
   dateIndexInWeightArr,
@@ -15,18 +17,18 @@ import {
 
 export default function DashboardPage() {
   const preferences = useContext(preferencesContext);
+  const userInfo = useContext(userInfoContext);
+
   const { control, register, handleSubmit } = useForm<Weight>();
 
   const [weightLog, setWeightLog] = useState(getWeightLogFromLocalStorage());
 
-  const onWeightSubmit: SubmitHandler<Weight> = (
-    submittedWeight: Weight,
-  ) => {
+  const onWeightSubmit: SubmitHandler<Weight> = (submittedWeight: Weight) => {
     submittedWeight.date = new Date(submittedWeight.date);
 
     const dateIndexInWeightLog: number = dateIndexInWeightArr(
       submittedWeight.date,
-      weightLog,
+      weightLog
     );
     if (dateIndexInWeightLog !== -1) {
       if (
@@ -41,10 +43,7 @@ export default function DashboardPage() {
       return;
     }
 
-    const updatedWeightLog = sortWeightLog([
-      ...weightLog,
-      submittedWeight,
-    ]);
+    const updatedWeightLog = sortWeightLog([...weightLog, submittedWeight]);
 
     setWeightLog(sortWeightLog(updatedWeightLog));
     storeWeightLogToLocalStorage(updatedWeightLog);
@@ -52,17 +51,15 @@ export default function DashboardPage() {
 
   return (
     <>
-      <h1 className="bg-sidibou-blue text-4xl text-center p-2">BodyTrackr</h1>
+     <Header />
 
-      <div className="flex w-2/3">
-        <WeightTable
-          weightLog={weightLog}
-          userPreferences={preferences}
-        />
-        {/* <WeightTable
-          weightLog={weightLog}
-          userPreferences={preferences}
-        /> */}
+      <div className="flex flex-wrap m-4">
+        <div className="w-2/3 p-16 custom-shadow rounded-[48px]">
+          <WeightChart weightLog={weightLog} />
+        </div>
+        <div className="flex flex-wrap justify-center w-1/3">
+          <WeightTable weightLog={weightLog} userPreferences={preferences} />
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onWeightSubmit)}>
