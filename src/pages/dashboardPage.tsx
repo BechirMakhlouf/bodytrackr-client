@@ -32,9 +32,7 @@ export default function DashboardPage() {
       weightLog
     );
     if (dateIndexInWeightLog !== -1) {
-      if (
-        confirm("date already exists! do you want to ovewrite it?") === false
-      ) {
+      if (confirm("date already exists! ovewrite it?") === false) {
         return;
       }
 
@@ -52,15 +50,15 @@ export default function DashboardPage() {
 
   return (
     <>
+      <Header />
 
-     <Header />
-
-      <div className="flex flex-wrap m-4">
-        <div className="min-w-[700px] w-2/3 px-8 flex justify-center items-center custom-shadow rounded-[48px]">
-          <WeightChart weightLog={weightLog} />
+      <div className="md:flex">
+        <div className="w-2/3">
+        <WeightChart weightLog={weightLog} />
         </div>
-        <div className="flex flex-wrap justify-center w-1/3">
-          <WeightTable weightLog={weightLog} userPreferences={preferences} />
+        <div className="w-1/3">
+        <WeightTable weightLog={weightLog} userPreferences={preferences} />
+
         </div>
       </div>
 
@@ -93,7 +91,7 @@ export default function DashboardPage() {
           )}
         />
 
-        <input type="submit" />
+        <button type="submit">submit</button>
       </form>
     </>
   );

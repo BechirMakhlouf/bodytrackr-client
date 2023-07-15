@@ -70,7 +70,7 @@ export class UserInfo implements IUserInfo {
     sex: Sex = Sex.Other,
     heightCm: number = 0,
     birthYear: number = 0,
-    goalWeight: 0,
+    goalWeight: number = 0,
     preferences: UserPreferences = new UserPreferences(),
     weightLog: Weight[] = []
   ) {
@@ -88,6 +88,4 @@ export class UserInfo implements IUserInfo {
   get currentWeight(): Weight {
     return this.weightLog[this.weightLog.length - 1];
   }
-
-
 }

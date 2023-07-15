@@ -4,7 +4,10 @@ function getWeightLogFromLocalStorage(): Weight[] {
   const weightLog: Weight[] =
     JSON.parse(localStorage.getItem("weightLog") as string) || [];
 
-  weightLog.forEach((weight) => (weight.date = new Date(weight.date)));
+  weightLog.forEach((weight) => {
+    weight.date = new Date(weight.date);
+    weight.weightKg = Number(weight.weightKg);
+  });
 
   return weightLog;
 }

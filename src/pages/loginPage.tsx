@@ -7,7 +7,7 @@ interface UserCredentials {
 
 // const loginUrl: URL = new URL("/login", SERVER_URL);
 
-async function login(userCredentials: UserCredentials) {
+export async function login(userCredentials: UserCredentials) {
 
   const loginUrl: URL = new URL("/login", SERVER_URL);
   const response = await fetch(loginUrl, {
@@ -15,7 +15,6 @@ async function login(userCredentials: UserCredentials) {
     headers: {
       "Content-Type": "application/json",
     },
-    // credentials:,
     body: JSON.stringify(userCredentials),
   });
 
