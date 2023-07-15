@@ -1,13 +1,10 @@
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  ReferenceLine,
   AreaChart,
   Area,
 } from "recharts";
@@ -15,6 +12,7 @@ import {
 import { Weight } from "../../globals";
 
 const WeightChart = (props: { weightLog: Weight[] }) => {
+  const [chartHeight, setChartHeight] = useState((window.innerHeight * 3) / 4);
   const weightLog = props.weightLog;
   const data = useMemo(
     () =>
@@ -39,23 +37,35 @@ const WeightChart = (props: { weightLog: Weight[] }) => {
 
     return [minWeight, maxWeight];
   }, []);
+
+  useEffect(() => {
+    function handleHeightResize() {
+      if (window.innerHeight < 800) {
+        setChartHeight(Math.trunc((window.innerHeight * 3) / 4));
+      }
+    }
+    window.addEventListener("resize", handleHeightResize);
+
+    return window.removeEventListener("resize", handleHeightResize);
+  }, []);
   return (
     <>
-      <div className="lg:border lg:rounded-[36px] lg:custom-shadow">
+      <div className="lg:border lg:rounded-[36px] lg:custom-shadow lg:p-8">
         <ResponsiveContainer
-          width={1200}
-          height={500}
+          width={"100%"}
+          height={chartHeight}
           className={"-translate-x-7 translate-y-4 round-[36px]"}
         >
-          <AreaChart height={500} width={1200} data={data}>
+          <AreaChart data={data}>
             {/* <ReferenceLine y={60} stroke="red" strokeDasharray="3 3" /> */}
-            <Area type="monotone" dataKey={`weight`} strokeWidth={2} />
+            <Area type="natural" dataKey={`weight`} strokeWidth={2} />
             <XAxis dataKey={`date`} fontSize={12} />
             <YAxis
               dataKey={`weight`}
               domain={[minWeight, maxWeight + 8]}
               fontSize={14}
             />
+            <Tooltip />
             <CartesianGrid opacity={0.4} />
           </AreaChart>
         </ResponsiveContainer>

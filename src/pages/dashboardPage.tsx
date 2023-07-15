@@ -7,7 +7,7 @@ import WeightTable from "../components/weightTableComponent";
 import WeightChart from "../components/weightChartComponent";
 import Header from "../components/headerComponent";
 
-import { preferencesContext, userInfoContext } from "../App";
+import { preferencesContext } from "../App";
 import { MAX_WEIGHT_KG, MIN_WEIGHT_KG, Weight } from "../../globals";
 import {
   dateIndexInWeightArr,
@@ -18,7 +18,7 @@ import {
 
 export default function DashboardPage() {
   const preferences = useContext(preferencesContext);
-  const userInfo = useContext(userInfoContext);
+  // const userInfo = useContext(userInfoContext);
 
   const { control, register, handleSubmit } = useForm<Weight>();
 
@@ -53,10 +53,10 @@ export default function DashboardPage() {
       <Header />
 
       <div className="md:flex">
-        <div className="w-2/3">
+        <div className="lg:w-2/3">
         <WeightChart weightLog={weightLog} />
         </div>
-        <div className="w-1/3">
+        <div className="lg:w-1/3">
         <WeightTable weightLog={weightLog} userPreferences={preferences} />
 
         </div>

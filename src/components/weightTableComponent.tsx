@@ -18,7 +18,7 @@ export default function WeightTable(props: {
   );
   return (
     <table
-      className="m-4 p-4 w-full flex flex-col 
+      className="md:m-4 p-4 w-full flex flex-col 
                   border-1 border-gray-100 rounded-[36px] custom-shadow"
     >
       <thead>
