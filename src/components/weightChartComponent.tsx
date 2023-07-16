@@ -25,6 +25,7 @@ const WeightChart = (props: { weightLog: Weight[] }) => {
     [weightLog]
   );
   const [minWeight, maxWeight] = useMemo(() => {
+    if (!weightLog.length) return [0, 80];
     let minWeight = weightLog[0].weightKg;
     let maxWeight = weightLog[0].weightKg;
 
