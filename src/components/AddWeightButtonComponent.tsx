@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useContext } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { motion, AnimatePresence, } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { MAX_WEIGHT_KG, MIN_WEIGHT_KG, Weight } from "../../globals";
@@ -13,16 +13,13 @@ import {
   sortWeightLog,
   storeWeightLogToLocalStorage,
 } from "../utils/utils";
+import { weightLogContext } from "../App";
 
-export default function AddWeightButton(props: {
-  weightLog: Weight[];
-  setWeightLog: Dispatch<SetStateAction<Weight[]>>;
-}) {
+export default function AddWeightButton() {
   const [isOpen, setIsOpen] = useState(false);
   const { control, register, handleSubmit } = useForm<Weight>();
-
-  const weightLog = props.weightLog;
-  const setWeightLog = props.setWeightLog;
+  const { state: weightLog, setState: setWeightLog } =
+    useContext(weightLogContext);
 
   const onWeightSubmit: SubmitHandler<Weight> = (submittedWeight: Weight) => {
     submittedWeight.date = new Date(submittedWeight.date);
@@ -48,9 +45,7 @@ export default function AddWeightButton(props: {
     storeWeightLogToLocalStorage(updatedWeightLog);
   };
   return (
-    <motion.div
-      className="fixed bottom-4 custom-shadow right-8 h-12 rounded-full p-2 flex justify-center items-center hover:cursor-pointer"
-    >
+    <motion.div className="fixed bottom-4 custom-shadow right-8 h-12 rounded-full p-2 flex justify-center items-center hover:cursor-pointer">
       <AnimatePresence>
         {isOpen ? (
           <form onSubmit={handleSubmit(onWeightSubmit)} className="flex">

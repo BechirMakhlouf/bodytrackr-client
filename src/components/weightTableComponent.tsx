@@ -1,17 +1,14 @@
-import { useMemo, Dispatch, SetStateAction } from "react";
+import { useMemo, useContext} from "react";
 
 import WeightTableRow from "./weightTableItem";
-import { UserPreferences, Weight } from "../../globals";
+import { Weight } from "../../globals";
 import { formatDate, weightDifferenceArray } from "../utils/utils";
+import { weightLogContext, preferencesContext } from "../App";
 
-export default function WeightTable(props: {
-  weightLog: Weight[];
-  setWeightLog: Dispatch<SetStateAction<Weight[]>>;
-  userPreferences: UserPreferences;
-}) {
-  const weightLog: Weight[] = props.weightLog;
-  const setWeightLog = props.setWeightLog;
-  const userPreferences = props.userPreferences;
+export default function WeightTable() {
+  const { state: weightLog, setState: setWeightLog } =
+    useContext(weightLogContext);
+  const { state: prefrences } = useContext(preferencesContext);
 
   const weightDiffArr: number[] = useMemo<number[]>(
     () => weightDifferenceArray(weightLog),
@@ -41,10 +38,7 @@ export default function WeightTable(props: {
               <WeightTableRow
                 key={formattedDate}
                 weight={weight}
-                weightLog={weightLog}
                 weightDiff={weightDiffArr[index]}
-                setWeightLog={setWeightLog}
-                weightUnit={userPreferences.weightUnit}
               />
             );
           })

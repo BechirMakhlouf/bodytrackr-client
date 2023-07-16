@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 import {
   XAxis,
   YAxis,
@@ -9,11 +9,11 @@ import {
   Area,
 } from "recharts";
 
-import { Weight } from "../../globals";
+import { weightLogContext } from "../App";
 
-const WeightChart = (props: { weightLog: Weight[] }) => {
+const WeightChart = () => {
   const [chartHeight, setChartHeight] = useState((window.innerHeight * 3) / 4);
-  const weightLog = props.weightLog;
+  const {state: weightLog} = useContext(weightLogContext);
   const data = useMemo(
     () =>
       weightLog.map((weight) => {
