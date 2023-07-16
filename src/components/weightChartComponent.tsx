@@ -59,7 +59,7 @@ const WeightChart = (props: { weightLog: Weight[] }) => {
         >
           <AreaChart data={data}>
             {/* <ReferenceLine y={60} stroke="red" strokeDasharray="3 3" /> */}
-            <Area type="natural" dataKey={`weight`} strokeWidth={2} />
+            <Area type="monotone" dataKey={`weight`} strokeWidth={2} />
             <XAxis dataKey={`date`} fontSize={12} />
             <YAxis
               dataKey={`weight`}
