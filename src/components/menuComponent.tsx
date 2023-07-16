@@ -31,21 +31,21 @@ export default function Menu() {
       />
       {isMenuActive ? (
         <ul className={`w-96 flex justify-around `}>
-          <motion.li
+          <li
             className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100"
           >
             Profile
-          </motion.li>
-          <motion.li
+          </li>
+          <li
             className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100"
           >
             Settings
-          </motion.li>
-          <motion.li
+          </li>
+          <li
             className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100"
           >
             Logout
-          </motion.li>
+          </li>
         </ul>
       ) : undefined}
     </motion.div>

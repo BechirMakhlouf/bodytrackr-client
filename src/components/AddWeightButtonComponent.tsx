@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { motion, AnimatePresence, useAnimate } from "framer-motion";
+import { motion, AnimatePresence, } from "framer-motion";
 
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { MAX_WEIGHT_KG, MIN_WEIGHT_KG, Weight } from "../../globals";

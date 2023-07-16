@@ -59,7 +59,13 @@ const WeightChart = (props: { weightLog: Weight[] }) => {
         >
           <AreaChart data={data}>
             {/* <ReferenceLine y={60} stroke="red" strokeDasharray="3 3" /> */}
-            <Area type="monotone" dataKey={`weight`} strokeWidth={2} />
+            <Area
+              type="monotone"
+              dataKey={`weight`}
+              strokeWidth={2}
+              // dot={{ stroke: "red", strokeWidth: 2 }}
+              animationDuration={1000}
+            />
             <XAxis dataKey={`date`} fontSize={12} />
             <YAxis
               dataKey={`weight`}
@@ -67,6 +73,7 @@ const WeightChart = (props: { weightLog: Weight[] }) => {
               fontSize={14}
             />
             <Tooltip />
+            {/* <Tooltip position={{x: 200, y: 80}} active={true}/> */}
             <CartesianGrid opacity={0.4} />
           </AreaChart>
         </ResponsiveContainer>
