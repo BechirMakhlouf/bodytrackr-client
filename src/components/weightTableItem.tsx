@@ -1,10 +1,10 @@
-import { useState, useContext, Dispatch, SetStateAction } from "react";
+import { useState, useContext } from "react";
 import DatePicker from "react-datepicker";
 
 import editIcon from "../assets/edit-text.svg";
-import { Unit, Weight } from "../../globals";
+import { Weight } from "../../globals";
 import { formatWeight, formatDate } from "../utils/utils";
-import { preferencesContext, weightLogContext } from "../App";
+import { preferencesContext } from "../App";
 
 export default function WeightTableRow(props: {
   weight: Weight;
@@ -12,16 +12,15 @@ export default function WeightTableRow(props: {
   // weightUnit: Unit;
 }) {
   const [isEditable, setIsEditable] = useState(false);
-  // const { state: weightLog, setState: setWeightLog} = useContext(weightLogContext);
-  const { state: { weightUnit } } = useContext(preferencesContext);
+  // const { state: weightLog, } = useContext(weightLogContext);
+  const {
+    state: { weightUnit },
+  } = useContext(preferencesContext);
   const weight = props.weight;
   const weightDiff = props.weightDiff;
 
   const formattedDate: string = formatDate(weight.date);
-  const formattedWeight: string = formatWeight(
-    weight.weightKg,
-    weightUnit
-  );
+  const formattedWeight: string = formatWeight(weight.weightKg, weightUnit);
   const formattedWeightDiff: string = weightDiff.toFixed(1);
 
   return (

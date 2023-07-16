@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -11,7 +11,6 @@ import plusIcon from "../assets/plus-solid.svg";
 import {
   dateIndexInWeightArr,
   sortWeightLog,
-  storeWeightLogToLocalStorage,
 } from "../utils/utils";
 import { weightLogContext } from "../App";
 
@@ -35,14 +34,11 @@ export default function AddWeightButton() {
 
       weightLog[dateIndexInWeightLog].weightKg = submittedWeight.weightKg;
 
-      setWeightLog(() => [...weightLog]);
+      setWeightLog((weightLog) => [...weightLog]);
       return;
     }
 
-    const updatedWeightLog = sortWeightLog([...weightLog, submittedWeight]);
-
-    setWeightLog(sortWeightLog(updatedWeightLog));
-    storeWeightLogToLocalStorage(updatedWeightLog);
+    setWeightLog((weightLog) => sortWeightLog([...weightLog, submittedWeight]));
   };
   return (
     <motion.div className="fixed bottom-4 custom-shadow right-8 h-12 rounded-full p-2 flex justify-center items-center hover:cursor-pointer">
