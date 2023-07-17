@@ -74,7 +74,7 @@ export default function AddWeightButton() {
                 required: "specify a date",
               }}
             />
-            <button type="submit">submit</button>
+            <input type="submit"/>
           </form>
         ) : undefined}
       </AnimatePresence>

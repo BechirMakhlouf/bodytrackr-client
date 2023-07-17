@@ -9,10 +9,8 @@ import { preferencesContext } from "../App";
 export default function WeightTableRow(props: {
   weight: Weight;
   weightDiff: number;
-  // weightUnit: Unit;
 }) {
   const [isEditable, setIsEditable] = useState(false);
-  // const { state: weightLog, } = useContext(weightLogContext);
   const {
     state: { weightUnit },
   } = useContext(preferencesContext);

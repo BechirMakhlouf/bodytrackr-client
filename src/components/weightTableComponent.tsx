@@ -1,4 +1,4 @@
-import { useMemo, useContext} from "react";
+import { useContext, useMemo } from "react";
 
 import WeightTableRow from "./weightTableItem";
 import { Weight } from "../../globals";
@@ -6,20 +6,16 @@ import { formatDate, weightDifferenceArray } from "../utils/utils";
 import { weightLogContext } from "../App";
 
 export default function WeightTable() {
-  const { state: weightLog} =
-    useContext(weightLogContext);
-  // const { state: prefrences } = useContext(preferencesContext);
+  const { state: weightLog } = useContext(weightLogContext);
 
   const weightDiffArr: number[] = useMemo<number[]>(
     () => weightDifferenceArray(weightLog),
-    weightLog
+    [weightLog]
   );
 
   return (
-    <table
-      className="md:m-4 p-4 w-full flex flex-col 
-                  border-1 border-gray-100 rounded-[36px] custom-shadow"
-    >
+    <table className="md:m-4 p-4 w-full flex flex-col 
+                  border-1 border-gray-100 rounded-[36px] custom-shadow">
       <thead>
         <tr className="flex text-xl justify-around ">
           <th className="font-normal">Date</th>
