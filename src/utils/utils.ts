@@ -118,6 +118,7 @@ function weightDifferenceArray(weightArr: Weight[]): number[] {
   });
 }
 
+
 export {
   cmToFeet,
   dateIndexInWeightArr,
