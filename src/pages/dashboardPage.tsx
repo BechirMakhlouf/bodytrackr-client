@@ -8,11 +8,11 @@ export default function DashboardPage() {
     <>
       <Header />
 
-      <div className="md:flex">
-        <div className="lg:w-2/3">
+      <div className="md:flex items-start">
+        <div className="my-12 lg:m-0 lg:w-2/3">
           <WeightChart />
         </div>
-        <div className="lg:w-1/3">
+        <div className="my-12 lg:m-0 lg:w-1/3">
           <WeightTable />
         </div>
       </div>

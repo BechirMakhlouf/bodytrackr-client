@@ -37,17 +37,18 @@ const WeightChart = () => {
     }
 
     return [minWeight, maxWeight];
-  }, []);
+  }, [weightLog]);
 
   useEffect(() => {
     function handleHeightResize() {
+      console.log(window.innerHeight);
       if (window.innerHeight < 800) {
         setChartHeight(Math.trunc((window.innerHeight * 3) / 4));
       }
     }
     window.addEventListener("resize", handleHeightResize);
 
-    return window.removeEventListener("resize", handleHeightResize);
+    // return window.removeEventListener("resize", handleHeightResize);
   }, []);
   return (
     <>

@@ -3,10 +3,6 @@ export const SERVER_URL: string = "http://127.0.0.1:6969/";
 export const MIN_WEIGHT_KG: number = 0;
 export const MAX_WEIGHT_KG: number = 1000;
 
-export interface Weight {
-  weightKg: number;
-  date: Date;
-}
 
 export enum Unit {
   Metric,
@@ -17,6 +13,11 @@ export enum Sex {
   Male,
   Female,
   Other,
+}
+
+export interface Weight {
+  weightKg: number;
+  date: Date;
 }
 
 export interface IUserPreferences {

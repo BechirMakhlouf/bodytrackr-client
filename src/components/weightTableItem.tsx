@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import editIcon from "../assets/edit-text.svg";
 import xmarkIcon from "../assets/xmark-solid.svg";
 import checkIcon from "../assets/check-solid.svg";
+
 import { MAX_WEIGHT_KG, MIN_WEIGHT_KG } from "../../globals";
 import { Weight } from "../../globals";
 import { formatDate, formatWeight, sortWeightLog } from "../utils/utils";
