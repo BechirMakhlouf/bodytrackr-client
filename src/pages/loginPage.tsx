@@ -1,35 +1,20 @@
 // import { useEffect, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-
+import { sendCredentials } from "../controllers/sessionManagementController";
 interface UserCredentials {
   email: string;
   password: string;
 }
 
-interface Tokens {
-  sessionToken: string,
-  refreshToken: string,
-}
 
-const onSubmit: SubmitHandler<UserCredentials> = async (data: UserCredentials) => {
-  await sendCredentials(data, "register");
+const onSubmit: SubmitHandler<UserCredentials> = async (
+  data: UserCredentials,
+) => {
+   
+  console.log(await sendCredentials(data, "register"));
 };
 
-// change EXPORT
-export async function sendCredentials(userCredentials: UserCredentials, endPoint: "login" | "register"): Promise<Tokens> {
-  const requestURL: URL = new URL(endPoint, import.meta.env.VITE_SERVER_URL);
-  
-  const tokens = await fetch(requestURL, {
-    method: "POST",
-    headers: {
-      "mode": "cors",
-      "Content-Type": "application/json",
-    },  
-    body: JSON.stringify(userCredentials),
-  })
-   console.log(await tokens.json());
-  return await tokens.json();
-} 
+
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<UserCredentials>();
@@ -38,7 +23,6 @@ export default function LoginPage() {
     <>
       <h1>Hello world</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-
         <input
           autoComplete="current_email"
           type="text"

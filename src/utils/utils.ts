@@ -64,20 +64,16 @@ function sortWeightLog(weightLog: Weight[]): Weight[] {
 }
 
 function getUserInfoFromLocalStorage(): UserInfo | undefined {
-  const userInfo: any = JSON.parse(localStorage.getItem("userInfo") as string);
-
+  const userInfo: UserInfo = JSON.parse(localStorage.getItem("userInfo") as string);
+  // check userInfo integrity
   if (!userInfo) {
     return undefined;
-  }
-
-  if (!(userInfo instanceof UserInfo)) {
-    throw new Error("invalid userInfo json object");
   }
 
   return userInfo;
 }
 
-function setUserInfoFromLocalStorage(userInfo: UserInfo) {
+function storeUserInfoToLocalStorage(userInfo: UserInfo) {
   localStorage.setItem("userInfo", JSON.stringify(userInfo));
 }
 
@@ -128,7 +124,7 @@ export {
   getUserInfoFromLocalStorage,
   getWeightLogFromLocalStorage,
   isWeightArrValid,
-  setUserInfoFromLocalStorage,
+  storeUserInfoToLocalStorage,
   sortWeightLog,
   storeWeightLogToLocalStorage,
   weightKgtoLbs,
