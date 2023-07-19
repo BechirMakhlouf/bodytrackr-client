@@ -13,6 +13,7 @@ import {
   getWeightLogFromLocalStorage,
   storeWeightLogToLocalStorage,
 } from "./utils/utils";
+import LoginPage from "./pages/loginPage";
 
 const userInfo: UserInfo = getUserInfoFromLocalStorage() || new UserInfo();
 userInfo.weightLog = getWeightLogFromLocalStorage();
@@ -44,7 +45,8 @@ export default function App() {
       <weightLogContext.Provider
         value={{ state: weightLog, setState: setWeightLog }}
       >
-        <DashboardPage />
+        {/* <DashboardPage /> */}
+        <LoginPage />
       </weightLogContext.Provider>
     </preferencesContext.Provider>
   );
