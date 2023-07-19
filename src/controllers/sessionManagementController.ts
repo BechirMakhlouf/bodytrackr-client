@@ -25,21 +25,21 @@ export async function sendCredentials(
       },
       body: JSON.stringify(userCredentials),
     });
-    console.log(await tokens.json());
 
     return await tokens.json();
+
   } catch (e) {
     return null;
   }
 }
-export function getSessionTokenFromLocalStorage(): jwt.JwtPayload | null {
-  return jwt.decode(localStorage.getItem("sessionToken") as string) as
-    | jwt.JwtPayload
-    | null;
-}
-export function checkSession() {
-  const sessionToken = getSessionTokenFromLocalStorage();
-  if (sessionToken) {
-    sessionToken.getExpiresAt();
-  }
-}
+// export function getSessionTokenFromLocalStorage(): jwt.JwtPayload | null {
+//   return jwt.decode(localStorage.getItem("sessionToken") as string) as
+//     | jwt.JwtPayload
+//     | null;
+// }
+// export function checkSession() {
+//   const sessionToken = getSessionTokenFromLocalStorage();
+//   if (sessionToken) {
+//     sessionToken.getExpiresAt();
+//   }
+// }

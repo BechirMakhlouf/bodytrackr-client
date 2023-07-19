@@ -1,20 +1,14 @@
-// import { useEffect, useRef } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { sendCredentials } from "../controllers/sessionManagementController";
 interface UserCredentials {
   email: string;
   password: string;
 }
-
-
 const onSubmit: SubmitHandler<UserCredentials> = async (
   data: UserCredentials,
 ) => {
-   
   console.log(await sendCredentials(data, "register"));
 };
-
-
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<UserCredentials>();
