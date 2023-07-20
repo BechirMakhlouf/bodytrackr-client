@@ -16,12 +16,13 @@ export async function sendCredentials(
 ): Promise<Tokens | null> {
   try {
     const requestURL: URL = new URL(endPoint, import.meta.env.VITE_SERVER_URL);
-
+    console.log(import.meta.env.VITE_SERVER_URL);
     const tokens = await fetch(requestURL, {
       method: "POST",
       headers: {
         "mode": "cors",
         "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": import.meta.env.VITE_SERVER_URL
       },
       credentials: "include",
       body: JSON.stringify(userCredentials),
