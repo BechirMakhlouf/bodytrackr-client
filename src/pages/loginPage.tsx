@@ -1,17 +1,23 @@
+import { useCallback } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { sendCredentials } from "../controllers/sessionManagementController";
-interface UserCredentials {
-  email: string;
-  password: string;
-}
-const onSubmit: SubmitHandler<UserCredentials> = async (
-  data: UserCredentials,
-) => {
-  console.log(await sendCredentials(data, "register"));
-};
+import {
+  sendCredentials,
+  UserCredentials,
+} from "../controllers/sessionManagementController";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<UserCredentials>();
+
+  const onSubmit: SubmitHandler<UserCredentials> = useCallback(async (
+    data: UserCredentials,
+  ) => {
+    const sessionToken: string | null = await sendCredentials(data, "login");
+
+    if (sessionToken) {
+      localStorage.setItem("sessionToken", sessionToken);
+    }
+    //check if the server is down
+  }, []);
 
   return (
     <>
@@ -40,5 +46,3 @@ export default function LoginPage() {
     </>
   );
 }
-
-export type { UserCredentials };

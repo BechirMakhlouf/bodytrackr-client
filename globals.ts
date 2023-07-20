@@ -2,7 +2,6 @@ export const SERVER_URL: URL = new URL(import.meta.env.VITE_SERVER_URL);
 export const MIN_WEIGHT_KG: number = 0;
 export const MAX_WEIGHT_KG: number = 1000;
 
-
 export enum Unit {
   Metric = "metric",
   Imperial = "imperial",

@@ -34,7 +34,6 @@ export const userInfoContext = createContext<context<UserInfo>>(
 export default function App() {
   const [weightLog, setWeightLog] = useState(() => userInfo.weightLog);
   const [preferences, setPrefrences] = useState(() => userInfo.preferences);
-
   useEffect(() => {
     storeWeightLogToLocalStorage(weightLog);
   }, [weightLog]);

@@ -1,58 +1,48 @@
-import { useRef } from "react";
-import { SERVER_URL } from "../../globals";
-import { UserCredentials } from "./loginPage";
-// const registerUrl: URL = new URL("/register", SERVER_URL);
+import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  sendCredentials,
+  UserCredentials,
+} from "../controllers/sessionManagementController";
 
-async function login(userCredentials: UserCredentials) {
-  const loginUrl: URL = new URL("/login", SERVER_URL);
+const onSubmit: SubmitHandler<UserCredentials> = async (
+  data: UserCredentials,
+) => {
+  const sessionToken: string | null = await sendCredentials(data, "register");
 
-  const response = await fetch(loginUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(userCredentials),
-  });
-  console.log(response);
-  console.log(await response.json());
-}
+  if (sessionToken) {
+    localStorage.setItem("sessionToken", sessionToken);
+  }
+  //check if the server is down
+};
 
 export default function RegisterPage() {
-  const emailInput = useRef({} as HTMLInputElement);
-  const passwordInput = useRef({} as HTMLInputElement);
+  const { register, handleSubmit } = useForm<UserCredentials>();
 
   return (
     <>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-
-          const userCredentials: UserCredentials = {
-            email: emailInput.current.value,
-            password: passwordInput.current.value,
-          };
-
-          await login(userCredentials);
-        }}
-      >
+      <h1>Hello world</h1>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <input
-          ref={emailInput}
-          className="border-1 border-black"
-          type="email"
-          name="email"
-          required={true}
+          autoComplete="current_email"
+          type="text"
+          {...register("email", {
+            required: true,
+            pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i,
+          })}
+          className=""
         />
-
         <input
-          ref={passwordInput}
-          className="border-1 border-black"
+          autoComplete="current_password"
           type="password"
-          name="password"
-          required={true}
+          {...register("password", {
+            required: true,
+            minLength: 8,
+            maxLength: 64,
+          })}
         />
-
-        <button type="submit">Register</button>
+        <input type="submit" />
       </form>
     </>
   );
 }
+
