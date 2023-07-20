@@ -23,6 +23,7 @@ export async function sendCredentials(
         "mode": "cors",
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(userCredentials),
     });
 
