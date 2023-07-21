@@ -28,7 +28,6 @@ export default function LoginPage() {
           type="text"
           {...register("email", {
             required: true,
-            pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i,
           })}
           className=""
         />

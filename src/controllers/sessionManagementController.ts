@@ -1,3 +1,4 @@
+import jwtDecode from "jwt-decode";
 import { UserInfo } from "../../globals";
 import { SERVER_URL } from "../../globals";
 import { setUserInfoToServer } from "./userInfoController";
@@ -7,16 +8,13 @@ export interface UserCredentials {
   password: string;
 }
 
-export function getAccessTokenFromLocalStorage(): string {
-  const sessionToken: string | null = localStorage.getItem("sessionToken");
-  if (!sessionToken) {
-    throw new Error("sessionToken not found in localStorage");
-  }
-  return sessionToken;
+export function getAccessTokenFromLocalStorage(): string | null {
+  const accessToken: string | null = localStorage.getItem("accessToken");
+  return accessToken;
 }
 
-export function setAccessTokenToLocalStorage(sessionToken: string) {
-  localStorage.setItemItem("sessionToken", sessionToken);
+export function setAccessTokenToLocalStorage(accessToken: string) {
+  localStorage.setItemItem("accessToken", accessToken);
 }
 
 export async function sendCredentials(
@@ -36,7 +34,7 @@ export async function sendCredentials(
       body: JSON.stringify(userCredentials),
     });
 
-    return (await tokens.json()).sessionToken;
+    return (await tokens.json()).accessToken;
   } catch (e) {
     return null;
   }
@@ -56,19 +54,45 @@ export async function requestNewAccessToken(): Promise<string> {
       credentials: "include",
     });
 
-    return (await tokens.json()).sessionToken;
+    return (await tokens.json()).accessToken;
   } catch (e) {
-    throw new Error((e as Error).message)
+    throw new Error((e as Error).message);
   }
 }
 
-export async function updateStoredSessionToken(): Promise<void> {
+export async function updateAccessToken(): Promise<void> {
   const accessToken: string = await requestNewAccessToken();
   setAccessTokenToLocalStorage(accessToken);
 }
 
-export async function register(userInfo: UserInfo) {
-  await setUserInfoToServer(userInfo) 
+export async function checkIfLoggedIn(): Promise<boolean> {
+  const accessToken = getAccessTokenFromLocalStorage();
+  try {
+    if (!accessToken) {
+      await updateAccessToken();
+      return true;
+    }
+
+    const { exp: accessTokenExpireTime } = jwtDecode<any>(accessToken);
+    if (accessTokenExpireTime * 1000 - Date.now() <= 0) {
+      localStorage.removeItem("accessToken");
+      await updateAccessToken();
+      return true;
+    }
+  } catch (e) {
+    console.log("isLoggedIn: ", (e as Error).message);
+  }
+  return false;
+}
+
+export async function register(userInfo: UserInfo): Promise<boolean> {
+  try {
+    await setUserInfoToServer(userInfo);
+    return true;
+  } catch (e) {
+    console.log("register: ", (e as Error).message)
+    return false;
+  }
   // start register proccess
 }
 
