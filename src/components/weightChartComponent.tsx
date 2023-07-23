@@ -9,14 +9,15 @@ import {
   Area,
 } from "recharts";
 
-import { weightLogContext } from "../App";
+import { userInfoContext } from "../App";
 
 const WeightChart = () => {
   const [chartHeight, setChartHeight] = useState((window.innerHeight * 3) / 4);
-  const {state: weightLog} = useContext(weightLogContext);
+  const {state: { weightLog }} = useContext(userInfoContext)
   const data = useMemo(
     () =>
       weightLog.map((weight) => {
+        weight.date = new Date(weight.date);
         return {
           date: weight.date.toLocaleDateString(),
           weight: weight.weightKg,
@@ -41,14 +42,13 @@ const WeightChart = () => {
 
   useEffect(() => {
     function handleHeightResize() {
-      console.log(window.innerHeight);
       if (window.innerHeight < 800) {
         setChartHeight(Math.trunc((window.innerHeight * 3) / 4));
       }
     }
     window.addEventListener("resize", handleHeightResize);
 
-    // return window.removeEventListener("resize", handleHeightResize);
+    return window.removeEventListener("resize", handleHeightResize);
   }, []);
   return (
     <>

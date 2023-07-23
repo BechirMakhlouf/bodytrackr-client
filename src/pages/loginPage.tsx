@@ -4,6 +4,7 @@ import {
   sendCredentials,
   UserCredentials,
 } from "../controllers/sessionManagementController";
+import { getUserInfoFromServer } from "../controllers/userInfoController";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<UserCredentials>();
@@ -11,10 +12,10 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<UserCredentials> = useCallback(async (
     data: UserCredentials,
   ) => {
-    const sessionToken: string | null = await sendCredentials(data, "login");
-
-    if (sessionToken) {
-      localStorage.setItem("sessionToken", sessionToken);
+    const accessToken: string | null = await sendCredentials(data, "login");
+    if (accessToken) {
+      localStorage.setItem("accessToken", accessToken);
+      console.log(await getUserInfoFromServer());
     }
     //check if the server is down
   }, []);

@@ -8,7 +8,7 @@ import checkIcon from "../assets/check-solid.svg";
 import { MAX_WEIGHT_KG, MIN_WEIGHT_KG } from "../../globals";
 import { Weight } from "../../globals";
 import { formatDate, formatWeight, sortWeightLog } from "../utils/utils";
-import { preferencesContext, weightLogContext } from "../App";
+import { userInfoContext } from "../App";
 
 export default function WeightTableRow(props: {
   weight: Weight;
@@ -17,9 +17,12 @@ export default function WeightTableRow(props: {
   const [weight, setWeight] = useState(props.weight);
   const [isEditable, setIsEditable] = useState(false);
   const {
-    state: { weightUnit },
-  } = useContext(preferencesContext);
-  const { setState: setWeightLog } = useContext(weightLogContext);
+    state: {
+      preferences: { weightUnit },
+    },
+    setState: setUserInfo,
+  } = useContext(userInfoContext);
+  // const { setState: setWeightLog } = useContext(weightLogContext);
 
   const weightDiff = props.weightDiff;
 
@@ -86,10 +89,14 @@ export default function WeightTableRow(props: {
                 const weightInWeightLog = props.weight;
                 weightInWeightLog.weightKg = weight.weightKg;
                 weightInWeightLog.date = weight.date;
+                // setWeightLog((prevWeightLog) => {
+                //   return [...sortWeightLog(prevWeightLog)];
+                // });
+                setUserInfo((prevUserInfo) => ({
+                  ...prevUserInfo,
+                  weightLog: [...sortWeightLog(prevUserInfo.weightLog)],
+                }));
 
-                setWeightLog((prevWeightLog) => {
-                  return [...sortWeightLog(prevWeightLog)];
-                });
                 setIsEditable(false);
               }}
             />

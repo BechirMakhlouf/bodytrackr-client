@@ -14,7 +14,13 @@ export function getAccessTokenFromLocalStorage(): string | null {
 }
 
 export function setAccessTokenToLocalStorage(accessToken: string) {
-  localStorage.setItemItem("accessToken", accessToken);
+  localStorage.setItem("accessToken", accessToken);
+}
+
+export function isTokenExpired(token: string): boolean {
+  const { exp: tokenExpireTime } = jwtDecode<any>(token);
+
+  return tokenExpireTime * 1000 - Date.now() <= 0;
 }
 
 export async function sendCredentials(
@@ -62,25 +68,22 @@ export async function requestNewAccessToken(): Promise<string> {
 
 export async function updateAccessToken(): Promise<void> {
   const accessToken: string = await requestNewAccessToken();
-  setAccessTokenToLocalStorage(accessToken);
+
+  if (accessToken) {
+    setAccessTokenToLocalStorage(accessToken);
+  }
 }
 
 export async function checkIfLoggedIn(): Promise<boolean> {
   const accessToken = getAccessTokenFromLocalStorage();
   try {
-    if (!accessToken) {
+    if (!accessToken || isTokenExpired(accessToken)) {
       await updateAccessToken();
-      return true;
+      // throw new Error("access doesn't work");
     }
-
-    const { exp: accessTokenExpireTime } = jwtDecode<any>(accessToken);
-    if (accessTokenExpireTime * 1000 - Date.now() <= 0) {
-      localStorage.removeItem("accessToken");
-      await updateAccessToken();
-      return true;
-    }
+    return true;
   } catch (e) {
-    console.log("isLoggedIn: ", (e as Error).message);
+    console.log(e);
   }
   return false;
 }
@@ -90,7 +93,7 @@ export async function register(userInfo: UserInfo): Promise<boolean> {
     await setUserInfoToServer(userInfo);
     return true;
   } catch (e) {
-    console.log("register: ", (e as Error).message)
+    console.log("register: ", (e as Error).message);
     return false;
   }
   // start register proccess

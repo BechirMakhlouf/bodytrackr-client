@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useAnimation, motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 
+import LoginModal from "./loginModalComponent";
 import menuIcon from "../assets/menu-icon.svg";
 
 export default function Menu() {
@@ -29,25 +30,23 @@ export default function Menu() {
         }}
         className={`relative left-0 p-4 hover:cursor-pointer`}
       />
-      {isMenuActive ? (
-        <ul className={`w-96 flex justify-around `}>
-          <li
-            className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100"
-          >
-            Profile
-          </li>
-          <li
-            className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100"
-          >
-            Settings
-          </li>
-          <li
-            className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100"
-          >
-            Logout
-          </li>
-        </ul>
-      ) : undefined}
+      {isMenuActive
+        ? (
+          <ul className={`w-96 flex justify-around `}>
+            <li className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100">
+              Profile
+            </li>
+            <li className="w-full py-3 box-content text-center rounded-full hover:cursor-pointer hover:bg-gray-100">
+              <LoginModal>
+                Settings
+              </LoginModal>
+            </li>
+            <li className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100">
+              Logout
+            </li>
+          </ul>
+        )
+        : undefined}
     </motion.div>
   );
 }

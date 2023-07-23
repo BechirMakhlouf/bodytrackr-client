@@ -1,4 +1,4 @@
-import { Unit, UserInfo, Weight } from "../../globals";
+import { IUserInfo, MAX_WEIGHT_KG, MIN_WEIGHT_KG, Unit, UserInfo, Weight } from "../../globals";
 
 function getWeightLogFromLocalStorage(): Weight[] {
   const weightLog: Weight[] =
@@ -17,8 +17,8 @@ function isWeightArrValid(weightArr: Weight[]): boolean {
   for (let weight of weightArr) {
     if (
       weight.date.getTime() > new Date().getTime() ||
-      weight.weightKg <= 20 ||
-      weight.weightKg >= 250
+      weight.weightKg <= MIN_WEIGHT_KG ||
+      weight.weightKg >= MAX_WEIGHT_KG
     ) {
       return false;
     }
@@ -34,7 +34,6 @@ function dateIndexInWeightArr(
 ): number {
   if (start > end) return -1;
 
-  console.log(start, end);
   let mid = Math.floor((start + end) / 2);
 
   if (weightLog[mid].date.toISOString() === date.toISOString()) return mid;
@@ -63,12 +62,35 @@ function sortWeightLog(weightLog: Weight[]): Weight[] {
   });
 }
 
-function getUserInfoFromLocalStorage(): UserInfo | undefined {
-  const userInfo: UserInfo = JSON.parse(localStorage.getItem("userInfo") as string);
+function getUserInfoFromLocalStorage(): UserInfo | null {
+  const storedUserInfo: IUserInfo = JSON.parse(localStorage.getItem("userInfo") as string);
   // check userInfo integrity
-  if (!userInfo) {
-    return undefined;
+  if (!storedUserInfo) {
+    return null;
   }
+
+  storedUserInfo.heightCm = Number(storedUserInfo.heightCm)
+  storedUserInfo.birthYear = Number(storedUserInfo.birthYear)
+  storedUserInfo.goalWeight = Number(storedUserInfo.goalWeight)
+
+  storedUserInfo.preferences.darkMode = Boolean(storedUserInfo.preferences.darkMode);
+
+  storedUserInfo.weightLog.forEach((weight) => {
+    weight.date = new Date(weight.date);
+    weight.weightKg = Number(weight.weightKg);
+  });
+  
+  const userInfo: UserInfo = new UserInfo(
+    storedUserInfo.name,
+    storedUserInfo.firstName,
+    storedUserInfo.email,
+    storedUserInfo.sex,
+    storedUserInfo.heightCm,
+    storedUserInfo.birthYear,
+    storedUserInfo.goalWeight,
+    {...storedUserInfo.preferences},
+    [...storedUserInfo.weightLog],
+  );
 
   return userInfo;
 }

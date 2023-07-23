@@ -1,22 +1,28 @@
+import { useCallback, useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+
+import { loginContext } from "../App";
 import {
   sendCredentials,
+  setAccessTokenToLocalStorage,
   UserCredentials,
 } from "../controllers/sessionManagementController";
 
-const onSubmit: SubmitHandler<UserCredentials> = async (
-  data: UserCredentials,
-) => {
-  const sessionToken: string | null = await sendCredentials(data, "register");
-
-  if (sessionToken) {
-    localStorage.setItem("sessionToken", sessionToken);
-  }
-  //check if the server is down
-};
-
 export default function RegisterPage() {
   const { register, handleSubmit } = useForm<UserCredentials>();
+  const { setState: setIsLoggedIn } = useContext(loginContext)
+  
+  const onSubmit: SubmitHandler<UserCredentials> = useCallback(async (
+    data: UserCredentials,
+  ) => {
+    const accessToken: string | null = await sendCredentials(data, "register");
+
+    if (accessToken) {
+      setAccessTokenToLocalStorage(accessToken);
+      setIsLoggedIn(true) 
+    }
+    //check if the server is down
+  }, []);
 
   return (
     <>
@@ -45,4 +51,3 @@ export default function RegisterPage() {
     </>
   );
 }
-

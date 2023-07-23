@@ -3,10 +3,10 @@ import { useContext, useMemo } from "react";
 import WeightTableRow from "./weightTableItem";
 import { Weight } from "../../globals";
 import { formatDate, weightDifferenceArray } from "../utils/utils";
-import { weightLogContext } from "../App";
+import { userInfoContext } from "../App";
 
 export default function WeightTable() {
-  const { state: weightLog } = useContext(weightLogContext);
+  const { state: { weightLog } } = useContext(userInfoContext);
 
   const weightDiffArr: number[] = useMemo<number[]>(
     () => weightDifferenceArray(weightLog),

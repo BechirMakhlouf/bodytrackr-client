@@ -4,6 +4,7 @@ import { getAccessTokenFromLocalStorage } from "./sessionManagementController";
 export async function getUserInfoFromServer(): Promise<UserInfo | Error> {
   try {
     const requestURL: URL = new URL("/userinfo", SERVER_URL);
+
     const userInfo = await fetch(requestURL, {
       method: "GET",
       headers: {
@@ -16,6 +17,7 @@ export async function getUserInfoFromServer(): Promise<UserInfo | Error> {
 
     return await userInfo.json();
   } catch (e) {
+
     return new Error((e as Error).message);
   }
 }

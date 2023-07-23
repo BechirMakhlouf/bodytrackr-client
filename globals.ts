@@ -47,11 +47,12 @@ export interface IUserInfo {
   sex?: Sex;
   heightCm?: number;
   birthYear?: number;
+  goalWeight?: number;
   preferences: UserPreferences;
   weightLog: Weight[];
 }
 
-export class UserInfo implements IUserInfo {
+export class UserInfo {
   name: string;
   firstName: string;
   email: string;
@@ -82,9 +83,5 @@ export class UserInfo implements IUserInfo {
     this.preferences = preferences;
     this.weightLog = weightLog;
     this.goalWeight = goalWeight;
-  }
-
-  get currentWeight(): Weight {
-    return this.weightLog[this.weightLog.length - 1];
   }
 }
