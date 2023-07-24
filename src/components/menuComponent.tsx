@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 
+import { loginContext } from "../App";
+import { handleLogout } from "../controllers/sessionManagementController";
 import LoginModal from "./loginModalComponent";
 import menuIcon from "../assets/menu-icon.svg";
 
 export default function Menu() {
   const [isMenuActive, setIsMenuActive] = useState(false);
+  const { state: login, setState: setLogin } = useContext(loginContext);
   const control = useAnimation();
 
   return (
@@ -30,23 +33,35 @@ export default function Menu() {
         }}
         className={`relative left-0 p-4 hover:cursor-pointer`}
       />
-      {isMenuActive
-        ? (
+      {(() => {
+        if (!isMenuActive) {
+          return undefined;
+        }
+        return (
           <ul className={`w-96 flex justify-around `}>
             <li className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100">
               Profile
             </li>
             <li className="w-full py-3 box-content text-center rounded-full hover:cursor-pointer hover:bg-gray-100">
-              <LoginModal>
-                Settings
-              </LoginModal>
+              Settings
             </li>
             <li className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100">
-              Logout
+              {login.isLoggedIn
+                ? (
+                  <span
+                    onClick={async () => {
+                      const isLogoutSuccess: boolean = await handleLogout(setLogin);
+                      
+                    }}
+                  >
+                    Logout
+                  </span>
+                )
+                : <LoginModal>LogIn</LoginModal>}
             </li>
           </ul>
-        )
-        : undefined}
+        );
+      })()}
     </motion.div>
   );
 }

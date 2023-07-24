@@ -10,8 +10,8 @@ import {
 
 export default function RegisterPage() {
   const { register, handleSubmit } = useForm<UserCredentials>();
-  const { setState: setIsLoggedIn } = useContext(loginContext)
-  
+  const { setState: setIsLoggedIn } = useContext(loginContext);
+
   const onSubmit: SubmitHandler<UserCredentials> = useCallback(async (
     data: UserCredentials,
   ) => {
@@ -19,7 +19,11 @@ export default function RegisterPage() {
 
     if (accessToken) {
       setAccessTokenToLocalStorage(accessToken);
-      setIsLoggedIn(true) 
+      setIsLoggedIn({
+        accessToken: accessToken,
+        isLoggedIn: true,
+        hasRefreshToken: true,
+      });
     }
     //check if the server is down
   }, []);

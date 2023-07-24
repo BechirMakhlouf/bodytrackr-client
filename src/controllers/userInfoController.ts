@@ -1,42 +1,71 @@
 import { SERVER_URL, UserInfo } from "../../globals";
-import { getAccessTokenFromLocalStorage } from "./sessionManagementController";
+import { isUserInfo } from "../utils/utils";
 
-export async function getUserInfoFromServer(): Promise<UserInfo | Error> {
-  try {
-    const requestURL: URL = new URL("/userinfo", SERVER_URL);
+export async function getUserInfoFromServer(
+  accessToken: string,
+): Promise<UserInfo | null> {
+  const requestURL: URL = new URL("/userinfo", SERVER_URL);
 
-    const userInfo = await fetch(requestURL, {
-      method: "GET",
-      headers: {
-        "mode": "cors",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": SERVER_URL.origin,
-        "Authorization": `Bearer ${getAccessTokenFromLocalStorage()}`,
-      },
-    });
+  const userInfoResponse = await fetch(requestURL, {
+    method: "GET",
+    headers: {
+      "mode": "cors",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": SERVER_URL.origin,
+      "Authorization": `Bearer ${accessToken}`,
+    },
+  });
+  if (userInfoResponse.status !== 200) return null;
 
-    return await userInfo.json();
-  } catch (e) {
+  const receivedUserInfo: any = await userInfoResponse.json();
 
-    return new Error((e as Error).message);
-  }
+  if (!isUserInfo(receivedUserInfo)) {
+    console.log("userInfo received is invalid");
+    return null;
+  };
+  
+  receivedUserInfo.heightCm = Number(receivedUserInfo.heightCm);
+  receivedUserInfo.birthYear = Number(receivedUserInfo.birthYear);
+  receivedUserInfo.goalWeight = Number(receivedUserInfo.goalWeight);
+  receivedUserInfo.preferences.darkMode = Boolean(
+    receivedUserInfo.preferences.darkMode,
+  );
+  receivedUserInfo.weightLog.forEach((weight) => {
+    weight.date = new Date(weight.date);
+    weight.weightKg = Number(weight.weightKg);
+  });
+
+  const userInfo: UserInfo = new UserInfo(
+    receivedUserInfo.name,
+    receivedUserInfo.firstName,
+    receivedUserInfo.email,
+    receivedUserInfo.sex,
+    receivedUserInfo.heightCm,
+    receivedUserInfo.birthYear,
+    receivedUserInfo.goalWeight,
+    { ...receivedUserInfo.preferences },
+    [...receivedUserInfo.weightLog],
+  );
+
+  return userInfo;
+  
 }
 
-export async function setUserInfoToServer(userInfo: UserInfo): Promise<boolean | Error> {
-  try {
-    const requestURL: URL = new URL("/userinfo", SERVER_URL);
-    await fetch(requestURL, {
-      method: "POST",
-      headers: {
-        "mode": "cors",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": SERVER_URL.origin,
-        "Authorization": `Bearer ${getAccessTokenFromLocalStorage()}`,
-      },
-      body: JSON.stringify(userInfo),
-    });
-    return true;
-  } catch (e) {
-    return new Error((e as Error).message);
-  }
+export async function setUserInfoToServer(
+  userInfo: UserInfo,
+  accessToken: string,
+): Promise<boolean> {
+  const requestURL: URL = new URL("/userinfo", SERVER_URL);
+  const response = await fetch(requestURL, {
+    method: "POST",
+    headers: {
+      "mode": "cors",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": SERVER_URL.origin,
+      "Authorization": `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(userInfo),
+  });
+
+  return response.status === 200;
 }

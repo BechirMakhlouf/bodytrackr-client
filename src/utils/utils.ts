@@ -1,4 +1,11 @@
-import { IUserInfo, MAX_WEIGHT_KG, MIN_WEIGHT_KG, Unit, UserInfo, Weight } from "../../globals";
+import {
+  IUserInfo,
+  MAX_WEIGHT_KG,
+  MIN_WEIGHT_KG,
+  Unit,
+  UserInfo,
+  Weight,
+} from "../../globals";
 
 function getWeightLogFromLocalStorage(): Weight[] {
   const weightLog: Weight[] =
@@ -30,7 +37,7 @@ function dateIndexInWeightArr(
   date: Date,
   weightLog: Weight[],
   start: number = 0,
-  end: number = weightLog.length - 1
+  end: number = weightLog.length - 1,
 ): number {
   if (start > end) return -1;
 
@@ -62,24 +69,38 @@ function sortWeightLog(weightLog: Weight[]): Weight[] {
   });
 }
 
+ export function isUserInfo(obj: any): obj is IUserInfo {
+  return (
+    "name" in obj &&
+    "firstName" in obj &&
+    "email" in obj &&
+    "sex" in obj &&
+    "heightCm" in obj &&
+    "birthYear" in obj &&
+    "goalWeight" in obj &&
+    "preferences" in obj &&
+    "weightLog" in obj
+  );
+}
+
 function getUserInfoFromLocalStorage(): UserInfo | null {
-  const storedUserInfo: IUserInfo = JSON.parse(localStorage.getItem("userInfo") as string);
-  // check userInfo integrity
-  if (!storedUserInfo) {
-    return null;
-  }
+  const storedUserInfo: any = JSON.parse(
+    localStorage.getItem("userInfo") || "{}",
+  );
 
-  storedUserInfo.heightCm = Number(storedUserInfo.heightCm)
-  storedUserInfo.birthYear = Number(storedUserInfo.birthYear)
-  storedUserInfo.goalWeight = Number(storedUserInfo.goalWeight)
+  if (!isUserInfo(storedUserInfo)) return null;
 
-  storedUserInfo.preferences.darkMode = Boolean(storedUserInfo.preferences.darkMode);
-
+  storedUserInfo.heightCm = Number(storedUserInfo.heightCm);
+  storedUserInfo.birthYear = Number(storedUserInfo.birthYear);
+  storedUserInfo.goalWeight = Number(storedUserInfo.goalWeight);
+  storedUserInfo.preferences.darkMode = Boolean(
+    storedUserInfo.preferences.darkMode,
+  );
   storedUserInfo.weightLog.forEach((weight) => {
     weight.date = new Date(weight.date);
     weight.weightKg = Number(weight.weightKg);
   });
-  
+
   const userInfo: UserInfo = new UserInfo(
     storedUserInfo.name,
     storedUserInfo.firstName,
@@ -88,7 +109,7 @@ function getUserInfoFromLocalStorage(): UserInfo | null {
     storedUserInfo.heightCm,
     storedUserInfo.birthYear,
     storedUserInfo.goalWeight,
-    {...storedUserInfo.preferences},
+    { ...storedUserInfo.preferences },
     [...storedUserInfo.weightLog],
   );
 
@@ -120,8 +141,9 @@ function formatDate(date: Date): string {
 }
 
 function formatWeight(weightKg: number, unit: Unit): string {
-  const weightValue: number =
-    unit === Unit.Imperial ? weightKgtoLbs(weightKg) : weightKg;
+  const weightValue: number = unit === Unit.Imperial
+    ? weightKgtoLbs(weightKg)
+    : weightKg;
 
   return Number(weightValue).toFixed(1);
 }
@@ -136,7 +158,6 @@ function weightDifferenceArray(weightArr: Weight[]): number[] {
   });
 }
 
-
 export {
   cmToFeet,
   dateIndexInWeightArr,
@@ -146,10 +167,10 @@ export {
   getUserInfoFromLocalStorage,
   getWeightLogFromLocalStorage,
   isWeightArrValid,
-  storeUserInfoToLocalStorage,
   sortWeightLog,
+  storeUserInfoToLocalStorage,
   storeWeightLogToLocalStorage,
+  weightDifferenceArray,
   weightKgtoLbs,
   weightLbsToKg,
-  weightDifferenceArray,
 };

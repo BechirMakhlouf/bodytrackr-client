@@ -1,23 +1,29 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   sendCredentials,
   UserCredentials,
 } from "../controllers/sessionManagementController";
 import { getUserInfoFromServer } from "../controllers/userInfoController";
+import { loginContext } from "../App";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<UserCredentials>();
-
+  const { setState: setLogin } = useContext(loginContext);
   const onSubmit: SubmitHandler<UserCredentials> = useCallback(async (
     data: UserCredentials,
   ) => {
     const accessToken: string | null = await sendCredentials(data, "login");
+
     if (accessToken) {
       localStorage.setItem("accessToken", accessToken);
-      console.log(await getUserInfoFromServer());
+
+      setLogin({
+        accessToken: accessToken,
+        isLoggedIn: true,
+        hasRefreshToken: true,
+      });
     }
-    //check if the server is down
   }, []);
 
   return (
