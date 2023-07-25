@@ -1,25 +1,25 @@
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import xmarkIcon from "../assets/xmark-solid.svg";
 import {
+    handleLoginState,
+  handleToken,
+  LoginState,
   sendCredentials,
   UserCredentials,
 } from "../controllers/sessionManagementController";
-import { getUserInfoFromServer } from "../controllers/userInfoController";
+import { loginContext } from "../App";
 
 export default function LoginModal(props: { children: ReactNode }) {
   const { register, handleSubmit } = useForm<UserCredentials>();
   const [isOpen, setIsOpen] = useState(false);
-
+  const { setState: setLoginState } = useContext(loginContext);
   const onSubmit: SubmitHandler<UserCredentials> = useCallback(async (
     data: UserCredentials,
   ) => {
-    const accessToken: string | null = await sendCredentials(data, "login");
-    if (accessToken) {
-      localStorage.setItem("accessToken", accessToken);
-      console.log(await getUserInfoFromServer());
-    }
-    //check if the server is down
+    let accessToken: string | null = await sendCredentials(data, "login");
+    const loginState: LoginState = await handleLoginState(accessToken);
+    setLoginState(loginState);
   }, []);
 
   return (

@@ -47,28 +47,25 @@ export async function sendCredentials(
   userCredentials: UserCredentials,
   endPoint: "login" | "register",
 ): Promise<string | null> {
-  try {
-    const requestURL: URL = new URL(endPoint, SERVER_URL);
-    const tokens = await fetch(requestURL, {
-      method: "POST",
-      headers: {
-        "mode": "cors",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": SERVER_URL.origin,
-      },
-      credentials: "include",
-      body: JSON.stringify(userCredentials),
-    });
-
-    return (await tokens.json()).accessToken;
-  } catch (e) {
-    return null;
-  }
+  const requestURL: URL = new URL(endPoint, SERVER_URL);
+  const tokensResponse = await fetch(requestURL, {
+    method: "POST",
+    headers: {
+      "mode": "cors",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": SERVER_URL.origin,
+    },
+    credentials: "include",
+    body: JSON.stringify(userCredentials),
+  });
+  return tokensResponse.status === 200
+    ? (await tokensResponse.json()).accessToken
+    : null;
 }
 
 export async function requestNewAccessToken(): Promise<string | null> {
   const requestURL: URL = new URL("token", SERVER_URL);
-
+  console.log("hello world");
   const responseToken = await fetch(requestURL, {
     method: "GET",
     headers: {
@@ -103,16 +100,27 @@ export async function handleToken(
     setAccessTokenToLocalStorage(token as string);
     return token;
   } catch (e) {
+    const newAccessToken: string | null = await requestNewAccessToken();
+    if (newAccessToken) {
+      setAccessTokenToLocalStorage(newAccessToken)
+      return newAccessToken;
+    }
     localStorage.removeItem("accessToken");
     return null;
   }
 }
 
-export async function handleLoginState(): Promise<LoginState> {
-  const storedToken = getAccessTokenFromLocalStorage();
-  const token : string | null = await handleToken(storedToken);
+export async function handleLoginState(
+  token?: string | null,
+): Promise<LoginState> {
+  token = token || getAccessTokenFromLocalStorage();
+  const verifiedToken: string | null = await handleToken(token);
 
-  return new LoginState(Boolean(token), Boolean(token), token);
+  return new LoginState(
+    Boolean(verifiedToken),
+    Boolean(verifiedToken),
+    verifiedToken,
+  );
 }
 
 export async function register(

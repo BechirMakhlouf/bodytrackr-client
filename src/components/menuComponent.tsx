@@ -1,14 +1,17 @@
 import { useContext, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 
-import { loginContext } from "../App";
+import { loginContext, userInfoContext } from "../App";
 import { handleLogout } from "../controllers/sessionManagementController";
 import LoginModal from "./loginModalComponent";
 import menuIcon from "../assets/menu-icon.svg";
 
 export default function Menu() {
   const [isMenuActive, setIsMenuActive] = useState(false);
-  const { state: login, setState: setLogin } = useContext(loginContext);
+  const { state: loginState, setState: setLoginState } = useContext(
+    loginContext,
+  );
+  const { state: userInfo } = useContext(userInfoContext);
   const control = useAnimation();
 
   return (
@@ -46,12 +49,23 @@ export default function Menu() {
               Settings
             </li>
             <li className="w-full py-3 text-center rounded-full hover:cursor-pointer hover:bg-gray-100">
-              {login.isLoggedIn
+              {loginState.isLoggedIn
                 ? (
                   <span
                     onClick={async () => {
-                      const isLogoutSuccess: boolean = await handleLogout(setLogin);
-                      
+                      if (loginState.isLoggedIn && loginState.accessToken) {
+                        const isLogoutSuccess: boolean = await handleLogout(
+                          userInfo,
+                          loginState.accessToken,
+                        );
+                        if (isLogoutSuccess) {
+                          setLoginState({
+                            isLoggedIn: false,
+                            hasRefreshToken: false,
+                            accessToken: null,
+                          });
+                        }
+                      }
                     }}
                   >
                     Logout

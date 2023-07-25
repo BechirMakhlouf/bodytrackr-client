@@ -54,29 +54,23 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
 ]);
+const loginState = await handleLoginState();
+let initialUserInfo: UserInfo | null = getUserInfoFromLocalStorage();
+
+if (loginState.isLoggedIn && loginState.accessToken) {
+  const userInfoFromServer: UserInfo | null = await getUserInfoFromServer(
+    loginState.accessToken,
+  );
+  initialUserInfo = userInfoFromServer;
+}
 
 export default function App() {
   const [login, setLogin] = useState<LoginState>(
-    new LoginState(null, null, getAccessTokenFromLocalStorage()),
+    loginState,
   );
   const [userInfo, setUserInfo] = useState(() =>
-    getUserInfoFromLocalStorage() || new UserInfo()
+    initialUserInfo || new UserInfo()
   );
-
-  useEffect(() => {
-    (async () => {
-      const loginState: LoginState = await handleLoginState();
-      setLogin(loginState);
-      if (login.isLoggedIn && login.accessToken) {
-        const userInfoFromServer: UserInfo | null = await getUserInfoFromServer(
-          login.accessToken,
-        );
-        if (userInfoFromServer) {
-          setUserInfo(userInfoFromServer);
-        }
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     storeUserInfoToLocalStorage(userInfo);
