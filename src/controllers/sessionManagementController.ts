@@ -65,7 +65,6 @@ export async function sendCredentials(
 
 export async function requestNewAccessToken(): Promise<string | null> {
   const requestURL: URL = new URL("token", SERVER_URL);
-  console.log("hello world");
   const responseToken = await fetch(requestURL, {
     method: "GET",
     headers: {
@@ -95,17 +94,14 @@ export async function handleToken(
   token: string | null,
 ): Promise<string | null> {
   try {
-    jwtDecode(token || ""); // this throws an errror if token is invalid
+    jwtDecode(token || ""); // this throws an error if token is invalid
     if (isTokenExpired(token as string)) return await requestNewAccessToken();
-    setAccessTokenToLocalStorage(token as string);
     return token;
   } catch (e) {
     const newAccessToken: string | null = await requestNewAccessToken();
     if (newAccessToken) {
-      setAccessTokenToLocalStorage(newAccessToken)
       return newAccessToken;
     }
-    localStorage.removeItem("accessToken");
     return null;
   }
 }
@@ -142,16 +138,22 @@ export async function handleLogout(
   accessToken: string,
 ): Promise<boolean> {
   const requestURL: URL = new URL("/logout", SERVER_URL);
+
   const response = await fetch(requestURL, {
     method: "POST",
     headers: {
       "mode": "cors",
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": SERVER_URL.origin,
       "Authorization": `Bearer ${accessToken}`,
     },
+    credentials: 'include',
     body: JSON.stringify(userInfo),
   });
-  localStorage.clear();
-  return response.status === 200;
+
+  if (response.status === 200) {
+    localStorage.removeItem("loggedInUserInfo")
+    return true;
+  }
+
+  return false;
 }

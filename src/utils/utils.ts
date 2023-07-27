@@ -69,7 +69,7 @@ function sortWeightLog(weightLog: Weight[]): Weight[] {
   });
 }
 
- export function isUserInfo(obj: any): obj is IUserInfo {
+export function isUserInfo(obj: any): obj is IUserInfo {
   return (
     "name" in obj &&
     "firstName" in obj &&
@@ -83,9 +83,11 @@ function sortWeightLog(weightLog: Weight[]): Weight[] {
   );
 }
 
-function getUserInfoFromLocalStorage(): UserInfo | null {
+function getUserInfoFromLocalStorage(
+  userInfoName?: "guestUserInfo" | "loggedInUserInfo",
+): UserInfo | null {
   const storedUserInfo: any = JSON.parse(
-    localStorage.getItem("userInfo") || "{}",
+    localStorage.getItem(userInfoName || "guestUserInfo") || "{}",
   );
 
   if (!isUserInfo(storedUserInfo)) return null;
@@ -116,8 +118,14 @@ function getUserInfoFromLocalStorage(): UserInfo | null {
   return userInfo;
 }
 
-function storeUserInfoToLocalStorage(userInfo: UserInfo) {
-  localStorage.setItem("userInfo", JSON.stringify(userInfo));
+function storeUserInfoToLocalStorage(
+  userInfo: UserInfo,
+  userInfoName?: "guestUserInfo" | "loggedInUserInfo",
+) {
+  localStorage.setItem(
+    userInfoName || "guestUserInfo",
+    JSON.stringify(userInfo),
+  );
 }
 
 function weightKgtoLbs(weightKg: number): number {

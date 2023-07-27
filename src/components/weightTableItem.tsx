@@ -22,7 +22,6 @@ export default function WeightTableRow(props: {
     },
     setState: setUserInfo,
   } = useContext(userInfoContext);
-  // const { setState: setWeightLog } = useContext(weightLogContext);
 
   const weightDiff = props.weightDiff;
 
@@ -89,9 +88,7 @@ export default function WeightTableRow(props: {
                 const weightInWeightLog = props.weight;
                 weightInWeightLog.weightKg = weight.weightKg;
                 weightInWeightLog.date = weight.date;
-                // setWeightLog((prevWeightLog) => {
-                //   return [...sortWeightLog(prevWeightLog)];
-                // });
+
                 setUserInfo((prevUserInfo) => ({
                   ...prevUserInfo,
                   weightLog: [...sortWeightLog(prevUserInfo.weightLog)],

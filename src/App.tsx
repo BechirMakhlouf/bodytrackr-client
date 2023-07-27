@@ -8,23 +8,22 @@ import {
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { UserInfo } from "../globals";
-import {
-  getUserInfoFromLocalStorage,
-  storeUserInfoToLocalStorage,
-} from "./utils/utils";
 import DashboardPage from "./pages/dashboardPage";
 import {
-  getAccessTokenFromLocalStorage,
-  handleLoginState,
   LoginState,
+  updateAccessToken,
 } from "./controllers/sessionManagementController";
+import LoginPage from "./pages/loginPage";
+import WelecomePage from "./pages/welcomePage";
+import RegisterPage from "./pages/registerPage";
 import {
   getUserInfoFromServer,
   setUserInfoToServer,
 } from "./controllers/userInfoController";
-import LoginPage from "./pages/loginPage";
-import WelecomePage from "./pages/welcomePage";
-import RegisterPage from "./pages/registerPage";
+import {
+  getUserInfoFromLocalStorage,
+  storeUserInfoToLocalStorage,
+} from "./utils/utils";
 
 type context<T> = { state: T; setState: Dispatch<SetStateAction<T>> };
 
@@ -54,39 +53,61 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
 ]);
-const loginState = await handleLoginState();
-let initialUserInfo: UserInfo | null = getUserInfoFromLocalStorage();
 
-if (loginState.isLoggedIn && loginState.accessToken) {
-  const userInfoFromServer: UserInfo | null = await getUserInfoFromServer(
-    loginState.accessToken,
-  );
-  initialUserInfo = userInfoFromServer;
+let accessToken: string | null = null; 
+let initialUserInfo: UserInfo | null;
+let initialLoginState: LoginState;
+
+try {
+  accessToken = await updateAccessToken();
+
+if (accessToken) {
+  initialUserInfo = await getUserInfoFromServer(accessToken);
+} else {
+  initialUserInfo = getUserInfoFromLocalStorage("guestUserInfo");
 }
 
+} catch (e) {
+
+  initialUserInfo = getUserInfoFromLocalStorage("guestUserInfo");
+}
+
+initialLoginState = {
+  isLoggedIn: Boolean(accessToken),
+  hasRefreshToken: Boolean(accessToken),
+  accessToken: accessToken,
+};
+
 export default function App() {
-  const [login, setLogin] = useState<LoginState>(
-    loginState,
-  );
-  const [userInfo, setUserInfo] = useState(() =>
-    initialUserInfo || new UserInfo()
+  const [loginState, setLoginState] = useState<LoginState>(initialLoginState);
+
+  const [userInfo, setUserInfo] = useState(initialUserInfo);
+  const [guestUserInfo, setGuestUserInfo] = useState(
+    getUserInfoFromLocalStorage("guestUserInfo") || new UserInfo(),
   );
 
-  useEffect(() => {
-    storeUserInfoToLocalStorage(userInfo);
-    (async () => {
-      if (login.isLoggedIn && login.accessToken) {
-        setUserInfoToServer(userInfo, login.accessToken);
-      }
-    })();
-  }, [userInfo]);
+  const [userInfoInUse, setUserInfoInUse] = [
+    loginState.isLoggedIn ? userInfo as UserInfo : guestUserInfo,
+    loginState.isLoggedIn
+      ? setUserInfo as Dispatch<SetStateAction<UserInfo>>
+      : setGuestUserInfo,
+  ];
+
+  if (userInfo && accessToken) {
+    setUserInfoToServer(userInfo, accessToken);
+  } else {
+    storeUserInfoToLocalStorage(guestUserInfo, "guestUserInfo");
+  }
 
   return (
     <loginContext.Provider
-      value={{ state: login, setState: setLogin }}
+      value={{ state: loginState, setState: setLoginState }}
     >
       <userInfoContext.Provider
-        value={{ state: userInfo, setState: setUserInfo }}
+        value={{
+          state: userInfoInUse,
+          setState: setUserInfoInUse,
+        }}
       >
         <RouterProvider router={router} />
       </userInfoContext.Provider>
