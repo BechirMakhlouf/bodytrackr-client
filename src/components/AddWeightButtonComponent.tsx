@@ -72,7 +72,7 @@ export default function AddWeightButton() {
                   className="border-1 border-black"
                   placeholderText="enter a date"
                   selected={field.value}
-                  onChange={(date: Date) => field.onChange(date)}
+                  onChange={field.onChange}
                   maxDate={new Date()}
                 />
               )}

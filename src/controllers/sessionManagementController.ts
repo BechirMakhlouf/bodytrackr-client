@@ -6,6 +6,10 @@ export interface UserCredentials {
   email: string;
   password: string;
 }
+
+interface UserCredentialswithCaptcha extends UserCredentials {
+  captchaToken: string;
+}
 export class LoginState {
   isLoggedIn: boolean | null;
   hasRefreshToken: boolean | null;
@@ -44,10 +48,11 @@ export function isTokenExpired(token: string): boolean {
 }
 
 export async function sendCredentials(
-  userCredentials: UserCredentials,
+  userCredentialsWithCaptcha: UserCredentialswithCaptcha,
   endPoint: "login" | "register",
 ): Promise<string | null> {
   const requestURL: URL = new URL(endPoint, SERVER_URL);
+  console.log("endpoint: ", endPoint)
   const tokensResponse = await fetch(requestURL, {
     method: "POST",
     headers: {
@@ -56,7 +61,7 @@ export async function sendCredentials(
       "Access-Control-Allow-Origin": SERVER_URL.origin,
     },
     credentials: "include",
-    body: JSON.stringify(userCredentials),
+    body: JSON.stringify(userCredentialsWithCaptcha),
   });
   return tokensResponse.status === 200
     ? (await tokensResponse.json()).accessToken

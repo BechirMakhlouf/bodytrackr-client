@@ -1,26 +1,39 @@
 import { ReactNode, useCallback, useContext, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import ReCAPTCHA from "react-google-recaptcha";
 import xmarkIcon from "../assets/xmark-solid.svg";
 import {
-    handleLoginState,
-  handleToken,
+  handleLoginState,
   LoginState,
   sendCredentials,
   UserCredentials,
 } from "../controllers/sessionManagementController";
 import { loginContext } from "../App";
 
+type SubmitType = "login" | "register";
+
+interface UserCredentialswithCaptcha extends UserCredentials {
+  captchaToken: string;
+}
+
 export default function LoginModal(props: { children: ReactNode }) {
-  const { register, handleSubmit } = useForm<UserCredentials>();
+  const [submitType, setSubmitType] = useState<SubmitType>("login");
+  const { register, handleSubmit, control } = useForm<UserCredentialswithCaptcha>();
   const [isOpen, setIsOpen] = useState(false);
   const { setState: setLoginState } = useContext(loginContext);
-  const onSubmit: SubmitHandler<UserCredentials> = useCallback(async (
-    data: UserCredentials,
-  ) => {
-    let accessToken: string | null = await sendCredentials(data, "login");
-    const loginState: LoginState = await handleLoginState(accessToken);
-    setLoginState(loginState);
-  }, []);
+
+  const onSubmit: SubmitHandler<UserCredentialswithCaptcha> = useCallback(
+    async (data: UserCredentialswithCaptcha) => {
+      let accessToken: string | null = await sendCredentials(data, submitType);
+
+      if (accessToken) {
+        const loginState: LoginState = await handleLoginState(accessToken);
+        setLoginState(loginState);
+        window.location.reload();
+      }
+    },
+    [submitType],
+  );
 
   return (
     <>
@@ -57,7 +70,9 @@ export default function LoginModal(props: { children: ReactNode }) {
                   setIsOpen(false);
                 }}
               />
-              <h1 className="text-3xl border-b pb-4">Log In</h1>
+              <h1 className="text-3xl border-b pb-4">
+                {submitType === "login" ? "Log In" : "Register"}
+              </h1>
               <div className="my-4">
                 <label htmlFor="email" className="text-gray-600">
                   Enter email:
@@ -87,11 +102,34 @@ export default function LoginModal(props: { children: ReactNode }) {
                   })}
                 />
               </div>
+              <Controller
+                control={control}
+                name="captchaToken"
+                render={({ field: { onChange } }) => {
+                  return (
+                    <ReCAPTCHA
+                      sitekey="6LcGT10nAAAAAI2LKsjtTcQyz3TXeVFzWfx8VbAQ"
+                      onChange={onChange}
+                    />
+                  );
+                }}
+                rules={{
+                  required: true,
+                }}
+              />
               <input
                 type="submit"
-                className="border rounded-[12px] p-2 self-end cursor-pointer"
+                className="border rounded-[12px] p-2 self-end hover:cursor-pointer"
                 value="Log In"
               />
+              <span
+                onClick={() =>
+                  setSubmitType((prevSubmitType) =>
+                    prevSubmitType === "login" ? "register" : "login"
+                  )}
+              >
+                or {submitType === "login" ? "Register" : "Log In"}
+              </span>
             </form>
           </div>
         )

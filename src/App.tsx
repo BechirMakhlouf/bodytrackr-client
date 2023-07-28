@@ -2,7 +2,6 @@ import {
   createContext,
   Dispatch,
   SetStateAction,
-  useEffect,
   useState,
 } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";

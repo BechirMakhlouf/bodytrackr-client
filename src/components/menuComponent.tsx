@@ -5,14 +5,13 @@ import { loginContext, userInfoContext } from "../App";
 import { handleLogout } from "../controllers/sessionManagementController";
 import LoginModal from "./loginModalComponent";
 import menuIcon from "../assets/menu-icon.svg";
-import { UserInfo } from "../../globals";
 
 export default function Menu() {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const { state: loginState, setState: setLoginState } = useContext(
     loginContext,
   );
-  const { state: userInfo, setState: setUserInfo } = useContext(userInfoContext)
+  const { state: userInfo,} = useContext(userInfoContext)
 
   const control = useAnimation();
 
@@ -66,6 +65,7 @@ export default function Menu() {
                             hasRefreshToken: false,
                             accessToken: null,
                           });
+                          window.location.reload()
                         }
                       }
                     }}
