@@ -1,6 +1,7 @@
 import jwtDecode from "jwt-decode";
 import { SERVER_URL, UserInfo } from "../../globals";
 import { setUserInfoToServer } from "./userInfoController";
+import { CredentialResponse } from "@react-oauth/google";
 
 export interface UserCredentials {
   email: string;
@@ -52,7 +53,7 @@ export async function sendCredentials(
   endPoint: "login" | "register",
 ): Promise<string | null> {
   const requestURL: URL = new URL(endPoint, SERVER_URL);
-  console.log("endpoint: ", endPoint)
+  console.log("endpoint: ", endPoint);
   const tokensResponse = await fetch(requestURL, {
     method: "POST",
     headers: {
@@ -104,6 +105,7 @@ export async function handleToken(
     return token;
   } catch (e) {
     const newAccessToken: string | null = await requestNewAccessToken();
+
     if (newAccessToken) {
       return newAccessToken;
     }
@@ -151,14 +153,32 @@ export async function handleLogout(
       "Content-Type": "application/json",
       "Authorization": `Bearer ${accessToken}`,
     },
-    credentials: 'include',
+    credentials: "include",
     body: JSON.stringify(userInfo),
   });
 
   if (response.status === 200) {
-    localStorage.removeItem("loggedInUserInfo")
+    localStorage.removeItem("loggedInUserInfo");
     return true;
   }
 
   return false;
+}
+
+export async function handleGoogleLogin(
+  credentialResponse: CredentialResponse,
+): Promise<string | null> {
+  const requestURL: URL = new URL("/oauth/google", SERVER_URL);
+  const tokensResponse = await fetch(requestURL, {
+    method: "POST",
+    headers: {
+      "mode": "cors",
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": SERVER_URL.origin,
+    },
+    credentials: "include",
+    body: JSON.stringify(credentialResponse),
+  });
+
+  return tokensResponse.status === 200 ? await tokensResponse.json() : null;
 }

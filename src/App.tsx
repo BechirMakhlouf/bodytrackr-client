@@ -1,9 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useState,
-} from "react";
+import { createContext, Dispatch, SetStateAction, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { UserInfo } from "../globals";
@@ -53,21 +48,19 @@ const router = createBrowserRouter([
   },
 ]);
 
-let accessToken: string | null = null; 
+let accessToken: string | null = null;
 let initialUserInfo: UserInfo | null;
 let initialLoginState: LoginState;
 
 try {
   accessToken = await updateAccessToken();
 
-if (accessToken) {
-  initialUserInfo = await getUserInfoFromServer(accessToken);
-} else {
-  initialUserInfo = getUserInfoFromLocalStorage("guestUserInfo");
-}
-
+  if (accessToken) {
+    initialUserInfo = await getUserInfoFromServer(accessToken);
+  } else {
+    initialUserInfo = getUserInfoFromLocalStorage("guestUserInfo");
+  }
 } catch (e) {
-
   initialUserInfo = getUserInfoFromLocalStorage("guestUserInfo");
 }
 
